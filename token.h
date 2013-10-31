@@ -1,5 +1,6 @@
 #define ID 1
-#define NOID 2
+#define SLASH 2
+#define NOID 3
 #define TOKENSIZE 100
 
 int getToken();

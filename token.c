@@ -4,9 +4,18 @@
 
 #define BUFSIZE 100
 
-#define STATE0 0
-#define STATE1 1
-#define STATE2 2
+enum states {
+			STATE0 = 1,
+			STATE1,
+			STATE2,
+			STATE3,
+			STATE4,
+			STATE5,
+			STATE6,
+			STATE7,
+			STATE8,
+			STATE9,
+			};
 
 int state = STATE0;
 
@@ -16,35 +25,80 @@ void error();
 char token[TOKENSIZE];
 
 int getToken(){
+	state = STATE0;
 	char *p = token;
 	while(1){
 		int c = getch();
-		while(state == STATE0 && (c == ' ' || c == '\t'))
-			c = getch();
 		if(c == EOF)
 			return c;
 		switch(state){
 			case STATE0:
-				if(c == '_' || isalpha(c)){
+				if(c == '/'){
 					state = STATE1;
+				}else if(c == ' ' || c == '\t'){
+					state = STATE8;	
+				}else if(c == '_' || isalpha(c)){
+					state = STATE9;
 					*p++ = c;
+				}else{
+					state = STATE0;
 				}
 				break;
 			case STATE1:
-				if(c == '_' || isalnum(c)){
+				if(c == '*'){
 					state = STATE2;
-					*p++ = c;
-				}
-				else{
-					state = STATE0;
+				}else if(c == '/'){
+					state = STATE3;
+				}else{
+					*p++ = '/';
 					*p = '\0';
 					ungetch(c);
-					return ID;
+					return SLASH;
 				}
 				break;
 			case STATE2:
-				if(c == '_' || isalnum(c)){
+				if(c == '*'){
+					state = STATE4;
+				}else{
 					state = STATE2;
+				}
+				break;
+			case STATE3:
+				if(c == '\n'){
+					state = STATE0;
+				}else{
+					state = STATE3;
+				}
+				break;
+			case STATE4:
+				if(c == '*'){
+					state = STATE4;
+				}else if(c == '/'){
+					state = STATE0;
+				}else{
+					state = STATE2;
+				}
+				break;
+			case STATE5:
+
+				break;
+			case STATE6:
+				
+				break;
+			case STATE7:
+				
+				break;
+			case STATE8:
+				if(c == ' ' || c == '\t'){
+					state = STATE8;
+				}else{
+					state = STATE0;
+					ungetch(c);
+				}
+				break;
+			case STATE9:
+				if(c == '_' || isalnum(c)){
+					state = STATE9;
 					*p++ = c;
 				}
 				else{
