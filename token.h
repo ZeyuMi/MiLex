@@ -6,6 +6,8 @@
 #define NUMOP 6
 #define TOKENSIZE 100
 
+void setIn(FILE *);
+void unsetIn();
 int getToken();
 
 extern char token[TOKENSIZE];

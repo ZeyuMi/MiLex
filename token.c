@@ -4,6 +4,16 @@
 
 #define BUFSIZE 100
 
+FILE *in;
+
+void setIn(FILE *inputFile){
+	in = inputFile;
+}
+
+void unsetIn(){
+	in = NULL;
+}
+
 enum states {
 			STATE0 = 1,
 			STATE1,
@@ -284,7 +294,7 @@ char buf[BUFSIZE];
 int bufp = 0;
 
 int getch(){
-	return (bufp > 0) ? buf[bufp--] : getchar();
+	return (bufp > 0) ? buf[bufp--] : getc(in);
 }
 
 void ungetch(int c){
