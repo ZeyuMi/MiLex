@@ -35,7 +35,7 @@ int main(int argc, char *argv[]){
 				fprintf(outputfile, "file %s\n", filename);
 				setIn(file);
 				while((tokenname=getToken()) != EOF)
-					fprintf(outputfile,"%d : %s\n", tokenname, token);
+					fprintf(outputfile,"%d : %s\n", tokenname, yytext);
 				unsetIn();
 				fclose(file);
 				afree(filename);

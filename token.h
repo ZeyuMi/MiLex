@@ -1,13 +1,23 @@
 #define ID 1
 #define NUMBER 2
-#define LOGICOP 3
-#define ASSIGNMENT 4
-#define BITOP 5
-#define NUMOP 6
+#define OP 3
+#define ASSIGN 4
 #define TOKENSIZE 100
+
+struct identry{
+	int sequnceid;
+	char *lexem;
+};
+
+struct opentry{
+	int sequnceid;
+	char *lexem;
+};
 
 void setIn(FILE *);
 void unsetIn();
 int getToken();
 
-extern char token[TOKENSIZE];
+extern int yyleng;
+extern char yytext[TOKENSIZE];
+extern int yylval;

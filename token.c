@@ -1,6 +1,6 @@
 #include<stdio.h>
 #include<ctype.h>
-#include"token.h"
+#include"yytext.h"
 
 #define BUFSIZE 100
 
@@ -37,14 +37,21 @@ enum states {
 
 int state = STATE0;
 
+static struct identry *idtable;
+static struct opentry *optable;
+int installID();
+int installOP();
 int getch();
 void ungetch(int);
 void error();
-char token[TOKENSIZE];
+
+char yytext[TOKENSIZE];
+int yyleng;
+int yylval;
 
 int getToken(){
 	state = STATE0;
-	char *p = token;
+	char *p = yytext;
 	while(1){
 		int c = getch();
 		if(c == EOF)
@@ -96,13 +103,13 @@ int getToken(){
 					*p++ = '/';
 					*p++ = '=';
 					*p = '\0';
-					return NUMOP;
+					return OP;
 				}else{
 					state = STATE0;
 					*p++ = '/';
 					*p = '\0';
 					ungetch(c);
-					return NUMOP;
+					return OP;
 				}
 				break;
 			case STATE2:
@@ -187,12 +194,12 @@ int getToken(){
 					state = STATE0;
 					*p++ = c;
 					*p = '\0';
-					return LOGICOP;
+					return OP;
 				}else{
 					state = STATE0;
 					*p = '\0';
 					ungetch(c);
-					return ASSIGNMENT;
+					return ASSIGN;
 				}
 				break;
 			case STATE13:
@@ -200,17 +207,17 @@ int getToken(){
 					state = STATE0;
 					*p++ = c;
 					*p = '\0';
-					return BITOP;
+					return OP;
 				}else if(c == '='){
 					state = STATE0;
 					*p++ = c;
 					*p = '\0';
-					return LOGICOP;
+					return OP;
 				}else{
 					state = STATE0;
 					*p = '\0';
 					ungetch(c);
-					return LOGICOP;
+					return OP;
 				}
 				break;
 			case STATE14:
@@ -218,17 +225,17 @@ int getToken(){
 					state = STATE0;
 					*p++ = c;
 					*p = '\0';
-					return BITOP;
+					return OP;
 				}else if(c == '='){
 					state = STATE0;
 					*p++ = c;
 					*p = '\0';
-					return LOGICOP;
+					return OP;
 				}else{
 					state = STATE0;
 					*p = '\0';
 					ungetch(c);
-					return LOGICOP;
+					return OP;
 				}
 				break;
 			case STATE15:
@@ -236,17 +243,17 @@ int getToken(){
 					state = STATE0;
 					*p++ = c;
 					*p = '\0';
-					return NUMOP;
+					return OP;
 				}else if(c == '+'){
 					state = STATE0;
 					*p++ = c;
 					*p = '\0';
-					return NUMOP;
+					return OP;
 				}else{
 					state = STATE0;
 					*p = '\0';
 					ungetch(c);
-					return NUMOP;
+					return OP;
 				}
 				break;
 			case STATE16:
@@ -254,17 +261,17 @@ int getToken(){
 					state = STATE0;
 					*p++ = c;
 					*p = '\0';
-					return NUMOP;
+					return OP;
 				}else if(c == '-'){
 					state = STATE0;
 					*p++ = c;
 					*p = '\0';
-					return NUMOP;
+					return OP;
 				}else{
 					state = STATE0;
 					*p = '\0';
 					ungetch(c);
-					return NUMOP;
+					return OP;
 				}
 				break;
 			case STATE17:
@@ -272,12 +279,12 @@ int getToken(){
 					state = STATE0;
 					*p++ = c;
 					*p = '\0';
-					return NUMOP;
+					return OP;
 				}else{
 					state = STATE0;
 					*p = '\0';
 					ungetch(c);
-					return NUMOP;
+					return OP;
 				}
 				break;
 			default:
@@ -286,9 +293,20 @@ int getToken(){
 	}
 }
 
+
+int installID(){
+}
+
+
+int installOP(){
+
+}
+
+
 void error(){
 	printf("ERROR: entering wrong state\n");	
 }
+
 
 char buf[BUFSIZE];
 int bufp = 0;
@@ -296,6 +314,7 @@ int bufp = 0;
 int getch(){
 	return (bufp > 0) ? buf[bufp--] : getc(in);
 }
+
 
 void ungetch(int c){
 	if(bufp >= BUFSIZE-1)
