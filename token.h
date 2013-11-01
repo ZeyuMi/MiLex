@@ -4,15 +4,12 @@
 #define ASSIGN 4
 #define TOKENSIZE 100
 
-struct identry{
+struct tabentry{
 	int sequnceid;
 	char *lexem;
+	struct tabentry *next;
 };
 
-struct opentry{
-	int sequnceid;
-	char *lexem;
-};
 
 void setIn(FILE *);
 void unsetIn();

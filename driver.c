@@ -1,7 +1,7 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include"token.h"
-#include"mem.h"
 
 int main(int argc, char *argv[]){
 	char *outputfilename = NULL;
@@ -14,10 +14,10 @@ int main(int argc, char *argv[]){
 			char *param = *++argv;
 			if(strcmp(param, "-o") == 0){
 				argc--;
-				outputfilename = alloc(strlen(*++argv)+1);
+				outputfilename = malloc(strlen(*++argv)+1);
 				strcpy(outputfilename, *argv);
 			}else{
-				*(inputfilenames+inputnum) = alloc(strlen(param)+1);
+				*(inputfilenames+inputnum) = malloc(strlen(param)+1);
 				strcpy(*(inputfilenames+inputnum), param);
 				inputnum++;
 			}
@@ -34,14 +34,26 @@ int main(int argc, char *argv[]){
 				int tokenname;
 				fprintf(outputfile, "file %s\n", filename);
 				setIn(file);
-				while((tokenname=getToken()) != EOF)
-					fprintf(outputfile,"%d : %s\n", tokenname, yytext);
+				while((tokenname=getToken()) != EOF){
+					switch(tokenname){
+						case OP:
+						case ID:
+							fprintf(outputfile, "<%d,%s,%d>\n", tokenname, yytext, yylval);
+							break;
+						case ASSIGN:
+						case NUMBER:
+							fprintf(outputfile, "<%d,%s>\n", tokenname, yytext);
+							break;
+						default:
+							;
+					}
+				}
 				unsetIn();
 				fclose(file);
-				afree(filename);
+				free(filename);
 				i++;
 		}
-		afree(outputfilename);
+		free(outputfilename);
 		fclose(outputfile);
 	}
 	return 0;

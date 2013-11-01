@@ -1,18 +1,11 @@
 #include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
 #include<ctype.h>
-#include"yytext.h"
+#include"token.h"
 
 #define BUFSIZE 100
 
-FILE *in;
-
-void setIn(FILE *inputFile){
-	in = inputFile;
-}
-
-void unsetIn(){
-	in = NULL;
-}
 
 enum states {
 			STATE0 = 1,
@@ -37,17 +30,35 @@ enum states {
 
 int state = STATE0;
 
-static struct identry *idtable;
-static struct opentry *optable;
+static struct tabentry *idtable = NULL;
+static struct tabentry *idp = NULL;
+static int idnumnow = 0;
+static struct tabentry *optable = NULL;
+static struct tabentry *opp = NULL;
+static int opnumnow = 0;
 int installID();
 int installOP();
 int getch();
 void ungetch(int);
 void error();
+void outputtable(char *, struct tabentry *);
 
 char yytext[TOKENSIZE];
 int yyleng;
 int yylval;
+FILE *in;
+
+void setIn(FILE *inputFile){
+	in = inputFile;
+}
+
+void unsetIn(){
+	in = NULL;
+	outputtable("idtable", idtable);
+	outputtable("optable", optable);
+	idtable = idp = optable = opp = NULL;
+	idnumnow = opnumnow = 0;
+}
 
 int getToken(){
 	state = STATE0;
@@ -103,12 +114,14 @@ int getToken(){
 					*p++ = '/';
 					*p++ = '=';
 					*p = '\0';
+					yylval = installOP();
 					return OP;
 				}else{
 					state = STATE0;
 					*p++ = '/';
 					*p = '\0';
 					ungetch(c);
+					yylval = installOP();
 					return OP;
 				}
 				break;
@@ -161,6 +174,7 @@ int getToken(){
 					state = STATE0;
 					*p = '\0';
 					ungetch(c);
+					yylval = installID();
 					return ID;
 				}
 				break;
@@ -194,6 +208,7 @@ int getToken(){
 					state = STATE0;
 					*p++ = c;
 					*p = '\0';
+					yylval = installOP();
 					return OP;
 				}else{
 					state = STATE0;
@@ -207,16 +222,19 @@ int getToken(){
 					state = STATE0;
 					*p++ = c;
 					*p = '\0';
+					yylval = installOP();
 					return OP;
 				}else if(c == '='){
 					state = STATE0;
 					*p++ = c;
 					*p = '\0';
+					yylval = installOP();
 					return OP;
 				}else{
 					state = STATE0;
 					*p = '\0';
 					ungetch(c);
+					yylval = installOP();
 					return OP;
 				}
 				break;
@@ -225,16 +243,19 @@ int getToken(){
 					state = STATE0;
 					*p++ = c;
 					*p = '\0';
+					yylval = installOP();
 					return OP;
 				}else if(c == '='){
 					state = STATE0;
 					*p++ = c;
 					*p = '\0';
+					yylval = installOP();
 					return OP;
 				}else{
 					state = STATE0;
 					*p = '\0';
 					ungetch(c);
+					yylval = installOP();
 					return OP;
 				}
 				break;
@@ -243,16 +264,19 @@ int getToken(){
 					state = STATE0;
 					*p++ = c;
 					*p = '\0';
+					yylval = installOP();
 					return OP;
 				}else if(c == '+'){
 					state = STATE0;
 					*p++ = c;
 					*p = '\0';
+					yylval = installOP();
 					return OP;
 				}else{
 					state = STATE0;
 					*p = '\0';
 					ungetch(c);
+					yylval = installOP();
 					return OP;
 				}
 				break;
@@ -261,16 +285,19 @@ int getToken(){
 					state = STATE0;
 					*p++ = c;
 					*p = '\0';
+					yylval = installOP();
 					return OP;
 				}else if(c == '-'){
 					state = STATE0;
 					*p++ = c;
 					*p = '\0';
+					yylval = installOP();
 					return OP;
 				}else{
 					state = STATE0;
 					*p = '\0';
 					ungetch(c);
+					yylval = installOP();
 					return OP;
 				}
 				break;
@@ -279,11 +306,13 @@ int getToken(){
 					state = STATE0;
 					*p++ = c;
 					*p = '\0';
+					yylval = installOP();
 					return OP;
 				}else{
 					state = STATE0;
 					*p = '\0';
 					ungetch(c);
+					yylval = installOP();
 					return OP;
 				}
 				break;
@@ -295,11 +324,52 @@ int getToken(){
 
 
 int installID(){
+	struct tabentry *temp = malloc(sizeof(struct tabentry));
+	temp->sequnceid = ++idnumnow;
+	temp->lexem = malloc(strlen(yytext)+1);
+	strcpy(temp->lexem, yytext);
+	if(idtable == NULL){
+		idtable = idp = temp;
+		idtable->next = NULL;
+	}else{
+		idp->next = temp;
+		idp = temp;
+		idp->next = NULL;
+	}
+	return idnumnow;
 }
 
 
-int installOP(){
+int installOP(){	
+	struct tabentry *temp = malloc(sizeof(struct tabentry));
+	temp->sequnceid = ++opnumnow;
+	temp->lexem = malloc(strlen(yytext)+1);
+	strcpy(temp->lexem, yytext);
+	if(optable == NULL){
+		optable = opp = temp;
+		optable->next = NULL;
+	}else{
+		opp->next = temp;
+		opp = temp;
+		opp->next = NULL;
+	}
+	return opnumnow;
+}
 
+void outputtable(char *tabname, struct tabentry *tabhead){
+	char *filename = tabname;
+	FILE *file = fopen(filename, "w");
+	fprintf(file, "%s,%s\n", "id", "lexem");
+	struct tabentry *p = tabhead;
+	struct tabentry *pre = NULL;
+	while(p != NULL){
+		fprintf(file, "%d,%s\n", p->sequnceid, p->lexem);
+		pre = p;
+		p = p->next;
+		free(pre);
+	}
+	tabhead = NULL;
+	fclose(file);
 }
 
 
