@@ -7,19 +7,24 @@
 #include "programGenerator.h"
 #include "lexWriter.h"
 
+char *declarations = NULL;
+struct Defentry *definitions = NULL;
+struct REentry *regexps = NULL;
+char *additionalfuncs = NULL;
+
 int main(int argc, char **argv){
-	if(argc == 1){
-		fprintf(stderr, "MiLex needs one input file\nUsage: ./MiLex filenam.l\n");
+	if(1 == argc){
+		fprintf(stderr, "MiLex needs one input file\n");
+		return 1;
 	}else{
 		char *filename = *++argv;
 		FILE *file = fopen(filename, "r");
 		if(NULL == file){
-			fprintf(stderr, "Error: %s cannot be opened.\n", filename);
+			fprintf(stderr, "MiLex cannot read file %s\n", filename);
 			return 1;
 		}
-		int flag = readFile(file);
-		if(flag == -1){
-			fprintf(stderr, "MiLex cannot read %s\n", filename);
+		if(-1 == readFile(file)){
+			fprintf(stderr, "the format of %s does not conform to MiLex\n", filename);
 			return 1;
 		}
 		constructNFA();
@@ -27,6 +32,6 @@ int main(int argc, char **argv){
 		optimizeDFA();
 		generateProgram();
 		writeProgram("lex.yy.c");
+		return 0;
 	}
-	return 0;
 }

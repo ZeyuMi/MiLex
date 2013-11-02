@@ -1,13 +1,10 @@
-OBJS = driver.o token.o
+OBJS = lex.o lexReader.o nfaConstructor.o dfaConstructor.o dfaOptimizer.o programGenerator.o lexWriter.o buffer.o
 
-lex : $(OBJS)
-	cc -g $(OBJS) -o lex
+CFLAGS= -g
 
-driver.o : token.h token.c driver.c
-	cc -g -c token.c mem.c driver.c
-token.o : token.h token.c
-	cc -g -c  token.c
+MiLex : $(OBJS)
+	cc -g $(OBJS) -o MiLex
 
 .PHONY : clean
 clean:
-	rm lex $(OBJS)
+	rm MiLex $(OBJS)
