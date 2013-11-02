@@ -163,6 +163,8 @@ int readDeclareSec(){
 				if('\"' == c || ']' == c){
 					state = STATE7;
 					addElement(c);
+				}else if('\n' == c || '\t' == c){
+					error();
 				}else{
 					state = STATE9;
 					addElement(c);
@@ -205,7 +207,127 @@ int readDeclareSec(){
 
 struct REentry *rep = NULL;
 int readRESec(){
-	return 1;
+	initialize();
+	int state = STATE0;
+	while(1){
+		char c = getch();
+		if(c == EOF)
+			return ERROR;
+		switch(state){
+			case STATE0:
+				if('/' == c){
+					state = STATE1;
+				}else if('%' == c){
+					state = STATE10;
+				}else if('\t' == c || ' ' == c || '\n' == c){
+					state = STATE0;
+				}else{
+					state = STATE5;
+					ungetch(c);
+				}
+				break;
+			case STATE1:
+				if('*' == c){
+					state = STATE2;
+				}else if('/' == c){
+					state = STATE4;
+				}else if(' ' == c || '\t' == c||'\n' == c){
+					error();
+				}else{
+					state = STATE5;
+					ungetch(c);
+				}
+				break;
+			case STATE2:
+				if('*' == c){
+					state = STATE3;
+				}else{
+					state = STATE2;
+				}
+				break;
+			case STATE3:
+				if('*' == c){
+					state = STATE3;
+				}else if('/' == c){
+					state = STATE0;
+				}else{
+					state = STATE2;
+				}
+				break;
+			case STATE4:
+				if('\n' == c){
+					state = STATE0;
+				}else{
+					state = STATE4;
+				}
+				break;
+			case STATE5:
+				if(' ' == c || '\t' == c){
+					state = STATE7;
+					addElement('\0');
+					insertREEntry(getBuffer());
+					rewindPointer();
+				}else if('\n' == c){
+					error();
+				}else if('\"' == c || '[' == c){
+					state = STATE6;
+					addElement(c);
+				}else{
+					state = STATE5;
+					addElement(c);
+				}
+				break;
+			case STATE6:
+				if('\"' == c || ']' == c){
+					state = STATE5;
+					addElement(c);
+				}else if('\n' == c || '\t' == c){
+					error();
+				}else{
+					state = STATE6;
+					addElement(c);
+				}
+				break;
+			case STATE7:
+				if(' ' == c || '\t' == c){
+					state = STATE7;
+				}else if('{' == c){
+					state = STATE8;
+				}else{
+					error();
+				}
+				break;
+			case STATE8:
+				if('}' == c){
+					state = STATE9;
+					addElement('\0');
+					insertREAction(getBuffer());
+					rewindPointer();
+				}else{
+					state = STATE9;
+					addElement(c);
+				}
+				break;
+			case STATE9:
+				if(' ' == c || '\t' == c){
+					state = STATE9;
+				}else if('\n' == c){
+					state = STATE0;
+				}else{
+					error();
+				}
+				break;
+			case STATE10:
+				if('%' == c){
+					state = STATE0;
+					destroy();
+					return 1;
+				}
+				break;
+			defualt:
+				error();
+		}
+	}
 }
 
 
@@ -220,6 +342,12 @@ void output(){
 		p = p->next;
 	}
 	fprintf(stdout, "%s\n", declarations);
+	struct REentry *e = regexps;
+	while(NULL != e){
+		fprintf(stdout, "%s : %s\n", e->regexp, e->action);
+		e = e->next;
+	}
+
 }
 
 
