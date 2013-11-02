@@ -10,7 +10,12 @@ struct REentry{
 	struct REentry *next;
 };
 
+struct Funcentry{
+	char *body;
+	struct Funcentry *next;
+};
+
 extern char *declarations;
 extern struct Defentry *definitions;
 extern struct REentry *regexps;
-extern char *additionalfuncs;
+extern struct Funcentry *additionalfuncs;

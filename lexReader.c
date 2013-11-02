@@ -37,9 +37,9 @@ int readFile(FILE *file){
 		return -1;
 	if(ERROR == readRESec())
 		return -1;
-	output();
 	if(ERROR == readFuncSec())
 		return -1;
+	output();
 	return 1;
 }
 
@@ -51,6 +51,8 @@ void insertDefEntry(char *);
 void insertDefContent(char *);
 void insertREEntry(char *);
 void insertREAction(char *);
+void insertFuncEntry(char *);
+
 
 struct Defentry *defp = NULL;
 int readDeclareSec(){
@@ -307,9 +309,144 @@ int readRESec(){
 	}
 }
 
-
+struct Funcentry *funcp = NULL;
 int readFuncSec(){
-	return 1;
+	int leftBraceNum = 0;
+	initialize();
+	int state = STATE0;
+	while(1){
+		char c = getch();
+		if(c == EOF){
+			if(state != STATE0)
+				return ERROR;
+			else{
+				destroy();
+				return 1;
+			}
+		}
+		switch(state){
+			case STATE0:
+				if('/' == c){
+					state = STATE1;
+				}else if(isalpha(c) || '_' == c){
+					state = STATE5;
+					leftBraceNum = 0;
+					addElement(c);
+				}else if('\t' == c || ' ' == c || '\n' == c){
+					state = STATE0;
+				}else{
+					error();
+				}
+				break;
+			case STATE1:
+				if('*' == c){
+					state = STATE2;
+				}else if('/' == c){
+					state = STATE4;
+				}else{
+					error();
+				}
+				break;
+			case STATE2:
+				if('*' == c){
+					state = STATE3;
+				}else{
+					state = STATE2;
+				}
+				break;
+			case STATE3:
+				if('*' == c){
+					state = STATE3;
+				}else if('/' == c){
+					state = STATE0;
+				}else{
+					state = STATE2;
+				}
+				break;
+			case STATE4:
+				if('\n' == c){
+					state = STATE0;
+				}else{
+					state = STATE4;
+				}
+				break;
+			case STATE5:
+				if('\"' == c){
+					state = STATE6;
+					addElement(c);
+				}else if('{' == c){
+					state = STATE5;
+					leftBraceNum++;
+					addElement(c);
+				}else if('/' == c){
+					state = STATE7;
+					addElement(c);
+				}else if(c == '}'){
+					leftBraceNum--;
+					addElement(c);
+					if(0 == leftBraceNum){
+						state = STATE0;
+						addElement('\0');
+						insertFuncEntry(getBuffer());
+						rewindPointer();
+					}else{
+						state = STATE5;
+					}
+				}else{
+					state = STATE5;
+					addElement(c);
+				}
+				break;
+			case STATE6:
+				addElement(c);
+				if('\"' == c){
+					state = STATE5;
+				}else if('\n' == c){
+					error();
+				}else{
+					state = STATE6;
+				}
+				break;
+			case STATE7:
+				addElement(c);
+				if('*' == c){
+					state = STATE8;
+				}else if('/' == c){
+					state = STATE10;
+				}else{
+					error();
+				}
+				break;
+			case STATE8:
+				addElement(c);
+				if('*' == c){
+					state = STATE9;
+				}else{
+					state = STATE8;
+				}
+				break;
+			case STATE9:
+				addElement(c);
+				if('*' == c){
+					state = STATE9;
+				}else if('/' == c){
+					state = STATE5;
+				}else{
+					state = STATE8;
+				}
+				break;
+			case STATE10:
+				addElement(c);
+				if('\n' == c){
+					state = STATE5;
+				}else{
+					state = STATE10;
+				}
+				break;
+			default:
+				error();
+		}
+	}
 }
 
 void output(){
@@ -324,7 +461,11 @@ void output(){
 		fprintf(stdout, "%s : %s\n", e->regexp, e->action);
 		e = e->next;
 	}
-
+	struct Funcentry *f = additionalfuncs;
+	while(NULL != f){
+		fprintf(stdout, "%s\n", f->body);
+		f = f->next;
+	}
 }
 
 
@@ -367,6 +508,20 @@ void insertREEntry(char *re){
 void insertREAction(char *action){
 	rep->action = malloc(strlen(action)+1);
 	strcpy(rep->action, action);
+}
+
+
+void insertFuncEntry(char *body){
+	struct Funcentry *temp = malloc(sizeof(struct Funcentry));
+	if(NULL == additionalfuncs){
+		additionalfuncs = funcp = temp;			
+	}else{
+		funcp->next = temp;
+		funcp = temp;
+	}
+	temp->body = malloc(strlen(body)+1);
+	strcpy(temp->body, body);
+	temp->next = NULL;
 }
 
 

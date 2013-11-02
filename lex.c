@@ -10,7 +10,7 @@
 char *declarations = NULL;
 struct Defentry *definitions = NULL;
 struct REentry *regexps = NULL;
-char *additionalfuncs = NULL;
+struct Funcentry *additionalfuncs = NULL;
 
 int main(int argc, char **argv){
 	if(1 == argc){
