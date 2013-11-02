@@ -49,7 +49,7 @@ void substituteCharClass(){
 
 }
 
-void replace(char *origin, char *rep, char *with){
+char *replace(char *origin, char *rep, char *with){
 	char *op = origin;
 	int replen = strlen(rep);
 	int withlen = strlen(with);
@@ -61,15 +61,13 @@ void replace(char *origin, char *rep, char *with){
 		count++;
 		op += replen;
 	}
-
 	
-	char *oldStr = origin;
-	op = oldStr;
-	origin = malloc(strlen(origin) + count * (replen - withlen) + 1);
-	np = origin;
-	char *lastPos = op;
+	op = origin;
+	char *result = malloc(strlen(origin) + count * (replen - withlen) + 1);
+	char *np = result;
 	char *left = NULL;
-	for(int i = 0; i < count; i++){
+	int i;
+	for(i = 0; i < count; i++){
 		left = strstr(op, rep);
 		strncpy(np, op, left-op);
 		np += (left-op);
@@ -79,12 +77,6 @@ void replace(char *origin, char *rep, char *with){
 		op += replen;
 	}
 	strcpy(np,op);
-	free(oldStr);
-}
-
-int main(){
-	char *a;
-	strcpy(a, "123412341234");
-	replace(a, "123", "aaa");
-	printf("%s\n", a);
+	free(origin);
+	return result;
 }
