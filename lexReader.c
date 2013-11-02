@@ -28,7 +28,6 @@ int readDeclareSec();
 int readRESec();
 int readFuncSec();
 
-void output();
 int readFile(FILE *file){
 	if(file == NULL)
 		return -1;
@@ -39,7 +38,6 @@ int readFile(FILE *file){
 		return -1;
 	if(ERROR == readFuncSec())
 		return -1;
-	output();
 	return 1;
 }
 
@@ -446,25 +444,6 @@ int readFuncSec(){
 			default:
 				error();
 		}
-	}
-}
-
-void output(){
-	struct Defentry *p = definitions;
-	while(NULL != p){
-		fprintf(stdout, "%s : %s\n", p->name, p->definition);
-		p = p->next;
-	}
-	fprintf(stdout, "%s\n", declarations);
-	struct REentry *e = regexps;
-	while(NULL != e){
-		fprintf(stdout, "%s : %s\n", e->regexp, e->action);
-		e = e->next;
-	}
-	struct Funcentry *f = additionalfuncs;
-	while(NULL != f){
-		fprintf(stdout, "%s\n", f->body);
-		f = f->next;
 	}
 }
 

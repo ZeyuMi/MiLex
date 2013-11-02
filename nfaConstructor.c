@@ -21,22 +21,28 @@ void preprocess(){
 }
 
 
-void replace(char *, char *, char *);
+char *replace(char *, char *, char *);
 
 
 /*replace all the definitions in subsequent definitions and regular expressions*/
 void replaceAllDef(){
 	struct Defentry *dp = definitions;
 	while(NULL != dp){
+		int namelen = strlen(dp->name);
+		char *temp = malloc(namelen+3);
+		strncpy(temp+1, dp->name, namelen);
+		*temp = '{';
+		*(temp+namelen+1) = '}';
+		*(temp+namelen+2) = '\0';
 		struct Defentry *deftemp = dp->next;
 		while(NULL != deftemp){
-			replace(deftemp->definition, dp->name, dp->definition);
+			deftemp->definition = replace(deftemp->definition, temp, dp->definition);
 			deftemp = deftemp->next;
 		}
 		/*now replace definition in regular expressions*/
 		struct REentry *retemp = regexps;
 		while(NULL != retemp){
-			replace(retemp->regexp, dp->name, dp->definition);
+			retemp->regexp = replace(retemp->regexp, temp, dp->definition);
 			retemp = retemp->next;
 		}
 		dp = dp->next;
@@ -54,16 +60,16 @@ char *replace(char *origin, char *rep, char *with){
 	int replen = strlen(rep);
 	int withlen = strlen(with);
 	if(NULL == origin || NULL == rep || NULL == with){
-		return;
+		return NULL;
 	}
 	int count = 0;
-	while(NULL != strstr(op, rep)){
+	while(NULL != (op = strstr(op, rep))){
 		count++;
 		op += replen;
 	}
 	
 	op = origin;
-	char *result = malloc(strlen(origin) + count * (replen - withlen) + 1);
+	char *result = malloc(strlen(origin) + count * (withlen - replen) + 1);
 	char *np = result;
 	char *left = NULL;
 	int i;

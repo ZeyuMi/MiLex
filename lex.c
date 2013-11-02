@@ -12,6 +12,8 @@ struct Defentry *definitions = NULL;
 struct REentry *regexps = NULL;
 struct Funcentry *additionalfuncs = NULL;
 
+
+void output();
 int main(int argc, char **argv){
 	if(1 == argc){
 		fprintf(stderr, "MiLex needs one input file\n");
@@ -32,6 +34,29 @@ int main(int argc, char **argv){
 		optimizeDFA();
 		generateProgram();
 		writeProgram("lex.yy.c");
+		output();
 		return 0;
 	}
 }
+
+
+void output(){
+	struct Defentry *p = definitions;
+	while(NULL != p){
+		fprintf(stdout, "%s : %s\n", p->name, p->definition);
+		p = p->next;
+	}
+	fprintf(stdout, "%s\n", declarations);
+	struct REentry *e = regexps;
+	while(NULL != e){
+		fprintf(stdout, "%s : %s\n", e->regexp, e->action);
+		e = e->next;
+	}
+	struct Funcentry *f = additionalfuncs;
+	while(NULL != f){
+		fprintf(stdout, "%s\n", f->body);
+		f = f->next;
+	}
+}
+
+
