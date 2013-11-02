@@ -152,7 +152,7 @@ int readDeclareSec(){
 				}else if('\n' == c || '\t' == c){
 					error();
 				}else{
-					state = STATE8;
+					state = STATE9;
 					addElement(c);
 				}
 				break;
