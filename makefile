@@ -1,4 +1,4 @@
-OBJS = lex.o lexReader.o preprocessor.o nfaConstructor.o dfaConstructor.o dfaOptimizer.o programGenerator.o lexWriter.o buffer.o
+OBJS = lex.o lexReader.o preprocessor.o nfaConstructor.o dfaConstructor.o dfaOptimizer.o programGenerator.o lexWriter.o buffer.o error.o
 
 CFLAGS= -g
 

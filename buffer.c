@@ -33,6 +33,7 @@ void addElement(char c){
 		if(buffer == NULL)
 			memError();
 		memcpy((void *)buffer, (void *)old, buffersize/2);
+		free(old);
 		bufp = buffer + (buffersize/2);
 	}
 	*bufp++ = c;
