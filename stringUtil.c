@@ -69,7 +69,7 @@ int isOperator(char c){
 int getPrecedence(char c, int instack){
 	if('?' == c || '+' == c || '*' == c)
 		return 10;
-	else if('@')
+	else if('@' == c)
 		return 5;
 	else if('|' == c)
 		return 1;
