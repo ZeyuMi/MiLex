@@ -4,6 +4,7 @@
 #include "lexReader.h"
 #include "lex.h"
 #include "buffer.h"
+#include "error.h"
 
 #define ERROR -1
 
@@ -42,7 +43,6 @@ int readFile(FILE *file){
 }
 
 
-void error();
 int getch();
 void ungetch(int );
 void insertDefEntry(char *);
@@ -79,7 +79,7 @@ int readDeclareSec(){
 				}else if('/' == c){
 					state = STATE4;
 				}else if(' ' == c || '\t' == c||'\n' == c){
-					error();
+					error("lexReader readDeclareSec STATE1");
 				}else{
 					state = STATE5;
 					addElement(c);
@@ -115,7 +115,7 @@ int readDeclareSec(){
 					insertDefEntry(getBuffer());
 					rewindPointer();
 				}else if('\n' == c){
-					error();
+					error("lexReader readDeclareSec STATE5");
 				}else{
 					state = STATE5;
 					addElement(c);
@@ -125,7 +125,7 @@ int readDeclareSec(){
 				if(' ' == c || '\t' == c){
 					state = STATE6;
 				}else if('\n' == c){
-					error();
+					error("lexReader readDeclareSec STATE6");
 				}else{
 					state = STATE7;
 					ungetch(c);
@@ -150,7 +150,7 @@ int readDeclareSec(){
 					state = STATE7;
 					addElement(c);
 				}else if('\n' == c || '\t' == c){
-					error();
+					error("lexReader readDeclareSec STATE8");
 				}else{
 					state = STATE8;
 					addElement(c);
@@ -164,7 +164,7 @@ int readDeclareSec(){
 					destroy();
 					return 1;
 				}else{
-					error();
+					error("lexReader readDeclareSec STATE9");
 				}
 				break;
 			case STATE10:
@@ -182,11 +182,11 @@ int readDeclareSec(){
 					strcpy(declarations, getBuffer());
 					rewindPointer();
 				}else{
-					error();
+					error("lexReader readDeclareSec STATE11");
 				}
 				break;
 			default:
-				error();
+				error("entering wrong state");
 		}
 	}
 }
@@ -218,7 +218,7 @@ int readRESec(){
 				}else if('/' == c){
 					state = STATE4;
 				}else if(' ' == c || '\t' == c||'\n' == c){
-					error();
+					error("lexReader readRESec STATE1");
 				}else{
 					state = STATE5;
 					ungetch(c);
@@ -254,7 +254,7 @@ int readRESec(){
 					insertREEntry(getBuffer());
 					rewindPointer();
 				}else if('\n' == c){
-					error();
+					error("lexReader readRESec STATE5");
 				}else if('\"' == c || '[' == c){
 					state = STATE6;
 					addElement(c);
@@ -268,7 +268,7 @@ int readRESec(){
 					state = STATE5;
 					addElement(c);
 				}else if('\n' == c || '\t' == c){
-					error();
+					error("lexReader readRESec STATE6");
 				}else{
 					state = STATE6;
 					addElement(c);
@@ -280,7 +280,7 @@ int readRESec(){
 				}else if('{' == c){
 					state = STATE8;
 				}else{
-					error();
+					error("lexReader readRESec STATE7");
 				}
 				break;
 			case STATE8:
@@ -302,7 +302,7 @@ int readRESec(){
 				}
 				break;
 			defualt:
-				error();
+				error("entering wrong state");
 		}
 	}
 }
@@ -333,7 +333,7 @@ int readFuncSec(){
 				}else if('\t' == c || ' ' == c || '\n' == c){
 					state = STATE0;
 				}else{
-					error();
+					error("lexReader readFuncSec state0");
 				}
 				break;
 			case STATE1:
@@ -342,7 +342,7 @@ int readFuncSec(){
 				}else if('/' == c){
 					state = STATE4;
 				}else{
-					error();
+					error("lexReader readFuncSec state1");
 				}
 				break;
 			case STATE2:
@@ -400,7 +400,7 @@ int readFuncSec(){
 				if('\"' == c){
 					state = STATE5;
 				}else if('\n' == c){
-					error();
+					error("lexReader readFuncSec state6");
 				}else{
 					state = STATE6;
 				}
@@ -412,7 +412,7 @@ int readFuncSec(){
 				}else if('/' == c){
 					state = STATE10;
 				}else{
-					error();
+					error("lexReader readFuncSec state7");
 				}
 				break;
 			case STATE8:
@@ -442,7 +442,7 @@ int readFuncSec(){
 				}
 				break;
 			default:
-				error();
+				error("entering wrong state.");
 		}
 	}
 }
@@ -503,10 +503,6 @@ void insertFuncEntry(char *body){
 	temp->next = NULL;
 }
 
-
-void error(){
-	fprintf(stderr, "Error: entering wrong states\n");
-}
 
 #define BUFSIZE 100
 

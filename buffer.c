@@ -28,9 +28,12 @@ char *getBuffer(){
 void addElement(char c){
 	if(bufp - buffer >= buffersize){
 		buffersize *= 2;
-		buffer = realloc(buffer, buffersize);
+		char *old = buffer;
+		buffer = malloc(buffersize);
 		if(buffer == NULL)
 			memError();
+		memcpy((void *)buffer, (void *)old, buffersize/2);
+		bufp = buffer + (buffersize/2);
 	}
 	*bufp++ = c;
 }
@@ -41,6 +44,14 @@ void addElements(char *s){
 		addElement(*s);
 		s++;
 	}
+}
+
+
+void removeLast(){
+	if(bufp == buffer)
+		return;
+	else
+		bufp--;
 }
 
 

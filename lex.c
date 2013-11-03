@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include "lex.h"
 #include "lexReader.h"
+#include "preprocessor.h"
 #include "nfaConstructor.h"
 #include "dfaConstructor.h"
 #include "dfaOptimizer.h"
@@ -30,6 +31,7 @@ int main(int argc, char **argv){
 			return 1;
 		}
 		output();
+		preprocess();
 		constructNFA();
 		constructDFA();
 		optimizeDFA();
