@@ -14,7 +14,7 @@ char top(){
 	}else if(topp == stack){
 		return EMPTY;
 	}else{
-		return *topp;
+		return *(topp-1);
 	}
 }
 
