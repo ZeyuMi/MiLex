@@ -30,14 +30,14 @@ int main(int argc, char **argv){
 			fprintf(stderr, "the format of %s does not conform to MiLex\n", filename);
 			return 1;
 		}
-		output();
+//		output();
 		preprocess();
 		constructNFA();
 		constructDFA();
 		optimizeDFA();
 		generateProgram();
 		writeProgram("lex.yy.c");
-		output();
+//		output();
 		return 0;
 	}
 }

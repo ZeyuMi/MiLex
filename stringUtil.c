@@ -4,6 +4,7 @@
 #include "buffer.h"
 #include "stringUtil.h"
 #include "stack.h"
+#include "lex.h"
 
 int isOperator(char);
 int getPrecedence(char, int);
@@ -23,7 +24,7 @@ char *infixToPostfix(char *origin){
 					}
 					pop();	// pop '('
 				}else{
-					while(EMPTY != top() && getPrecedence(top(), 1) > getPrecedence(c, 0)){
+					while(EMPTY != top() && getPrecedence(top(), 1) >= getPrecedence(c, 0)){
 						addElement(pop());
 					}
 					push(c);
@@ -49,7 +50,7 @@ char *infixToPostfix(char *origin){
 int isOperator(char c){
 	if('*' == c)
 		return 1;
-	else if('@' == c)
+	else if(CONSYMBOL == c)
 		return 1;
 	else if('|' == c)
 		return 1;
@@ -69,7 +70,7 @@ int isOperator(char c){
 int getPrecedence(char c, int instack){
 	if('?' == c || '+' == c || '*' == c)
 		return 10;
-	else if('@' == c)
+	else if(CONSYMBOL == c)
 		return 5;
 	else if('|' == c)
 		return 1;
