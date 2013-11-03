@@ -29,6 +29,7 @@ int main(int argc, char **argv){
 			fprintf(stderr, "the format of %s does not conform to MiLex\n", filename);
 			return 1;
 		}
+		output();
 		constructNFA();
 		constructDFA();
 		optimizeDFA();

@@ -36,6 +36,14 @@ void addElement(char c){
 }
 
 
+void addElements(char *s){
+	while('\0' != *s){
+		addElement(*s);
+		s++;
+	}
+}
+
+
 void destroy(){
 	buffersize = 0;
 	free(buffer);
