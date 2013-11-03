@@ -49,7 +49,7 @@ void replaceAllDef(){
 char *fillCharClass(char *);
 char *substituteCharClass(char *);
 char *removeDoubleQuote(char *);
-
+char *addConSymbol(char *);
 
 /*substitute character class and question symbol with its correspoinding characters*/
 void substitute(){
@@ -58,6 +58,7 @@ void substitute(){
 		retemp->regexp = fillCharClass(retemp->regexp);
 		retemp->regexp = substituteCharClass(retemp->regexp);
 		retemp->regexp = removeDoubleQuote(retemp->regexp);
+		retemp->regexp = addConSymbol(retemp->regexp);
 		retemp = retemp->next;
 	}
 }
@@ -366,4 +367,75 @@ char *removeDoubleQuote(char *origin){
 	strcpy(result, s);
 	destroy();
 	return result;
+}
+
+
+char *addConSymbol(char *origin){
+	initialize();
+	int pos = -1;
+	int orilen = strlen(origin);
+	int state = STATE0;
+	while(1){
+		pos++;
+		if(pos >= orilen)
+			break;
+		char c = *(origin+pos);
+		switch(state){
+			case STATE0:
+				if('|' == c || '(' == c){
+					state = STATE0;
+					addElement(c);
+				}else if('?' == c || '*' == c || '+' == c){
+					state = STATE1;
+					addElement(c);
+				}else if('\\' == c){
+					state = STATE3;
+					addElement(c);
+				}else{
+					state = STATE2;
+					addElement(c);
+				}
+				break;
+			case STATE1:
+				if('|' == c){
+					state = STATE0;
+					pos--;
+				}else if(')'){
+					state = STATE0;
+					addElement(c);
+				}else if((pos+1) >= orilen){
+					state = STATE0;
+					addElement(c);
+				}else{
+					state = STATE0;
+					addElement(CONSYMBOL);
+					addElement(c);
+				}
+				break;
+			case STATE2:
+				if('?' == c||'*' == c||'+' == c||'|' == c|| ')' == c){
+					state = STATE0;
+					pos--;
+				}else{
+					state = STATE0;
+					addElement(CONSYMBOL);
+					pos--;
+				}
+				break;
+			case STATE3:
+				state = STATE0;
+				addElement(c);
+				break;
+			default:
+				error("entering wrong state");
+		}
+	}
+	free(origin);
+	addElement('\0');
+	char *s = getBuffer();
+	char *result = malloc(strlen(s) + 1);
+	strcpy(result, s);
+	destroy();
+	return result;
+
 }

@@ -81,11 +81,3 @@ int getPrecedence(char c, int instack){
 	}else
 		return -1;
 }
-
-int main(){
-	char *s = "1@2|3*@(2+@c*)";
-	char *m = malloc(strlen(s)+1);
-	strcpy(m,s);
-	printf("%s\n", infixToPostfix(m));
-	return 0;
-}

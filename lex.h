@@ -19,3 +19,5 @@ extern char *declarations;
 extern struct Defentry *definitions;
 extern struct REentry *regexps;
 extern struct Funcentry *additionalfuncs;
+
+#define CONSYMBOL -2

@@ -2,6 +2,7 @@
 #include "nfaConstructor.h"
 
 void constructNFA(){
+	
 }
 
 
