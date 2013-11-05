@@ -4,26 +4,38 @@
 #include "stringUtil.h"
 #include "graph.h"
 
+struct NFASection{
+	int start;
+	int end;
+};
 
-struct vertex *constructFromRE(char *);
+int constructFromRE(char *);
+
+int stateNum = 0;
 
 void constructNFA(){
 	struct REentry *retemp = regexps;
-	struct vertex *startPoint = getNewVertex();
+	int startPoint = ++stateNum;
+
 	while(NULL != retemp){
 		char *postfix = infixToPostfix(retemp->regexp);
-		struct vertex *v = constructFromRE(postfix);
-		connectVertexes(startPoint, v, EPSILON);
+		int childgraph = constructFromRE(postfix);
+		addEdge(startPoint, childgraph);
 		retemp = retemp->next;
 	}
 }
 
 
-struct vertex *constructFromRE(char *postRE){
+void push(struct NFASection);
+struct NFASection pop();
+
+int constructFromRE(char *postRE){
+	int startPoint = ++stateNum;
 	int pos = -1;
 	char c;
 	struct vertex *result;
 	struct vertex *temp1;
+
 	while(1){
 		pos++;
 		c = *(postRE+pos);
@@ -48,8 +60,26 @@ struct vertex *constructFromRE(char *postRE){
 	}
 }
 
+#define STACK_DEFAULT 100
+struct NFASection *stack = NULL;
+struct NFASection *topp = NULL;
+int stackSize = 0;
 
-static int stateNum = 0;
-struct vertex *getNewVertex(){
-	return createVertex(++stateNum, EPSILON, NULL);
+void push(struct NFASection n){
+	if(NULL == stack){
+		stackSize = STACK_DEFAULT;
+		topp = stack = (struct NFASection *)malloc(stackSize * sizeof(struct NFASection));
+	}else if(topp - stack == stackSize){
+		stackSize *= 2;
+		struct NFASection *old = stack;
+		stack = (struct NFASection *)malloc(stackSize * sizeof(struct NFASection));
+		memcpy(stack, old, (stackSize / 2) * sizeof(struct NFASection));
+		topp = stack + stackSize;
+	}
+	topp++ = &n;
+}
+
+
+struct NFASection pop(){
+
 }
