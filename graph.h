@@ -10,8 +10,17 @@ struct vertex{
 struct edge{
 	struct vertex *connectsTo;
 	char symbol;
+	struct edge *next;
 };
 
-int addVertex(int, char, char *);
+int addVertex(int, char *);
 
 int addEdge(int, int, char);
+
+void destroy();
+
+int isVertexExists(int);
+
+int isConnectTo(int, int);
+
+struct vertex *getVertex(int);

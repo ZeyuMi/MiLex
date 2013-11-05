@@ -3,32 +3,31 @@
 
 static struct vertex *graph = NULL;
 
+int isVertexExist(int);
+int isConnectTo(int, int);
+struct vertex *getVertex(int);
+
+
 int addVertex(int state, char *action){
+	if(isVertexExist(state))
+			return 0;
 	struct vertex *v = malloc(sizeof(struct vertex));
 	v->state = state;
 	v->edges = NULL;
 	v->action = action;
 	v->next = NULL;
 
-	if(NULL == result){
-		result = v;
+	if(NULL == graph){
+		graph = v;
 	}else{
-		struct vertex *temp = result;
-		if(state == temp->state)
-			return 0;
+		struct vertex *temp = graph;
 		while(NULL != temp->next){
-			if(state == temp->next->state)
-				return 0;
 			temp = temp->next;
 		}
 		temp->next = v;
 	}
 	return 1;
 }
-
-int isVertexExist(int);
-int isConnectTo(int, int);
-struct vertex *getVertex(int);
 
 
 int addEdge(int state1, int state2, char symbol){
@@ -42,12 +41,51 @@ int addEdge(int state1, int state2, char symbol){
 	struct edge *newEdge = malloc(sizeof(struct edge));
 	newEdge->connectsTo = v2;
 	newEdge->symbol = symbol;
+	newEdge->next = NULL;
 
-	while(NULL != v1->edges){
-		v1 = v1->edges->connectsTo;
+	struct edge *edgetemp = v1->edges;
+	if(NULL == edgetemp){
+		v1->edges = newEdge;
+	}else{
+		while(NULL != edgetemp->next){
+			edgetemp = edgetemp->next;
+		}
+		edgetemp->next = newEdge;
 	}
-	v1->edges = newEdge;
 	return 1;
+}
+
+void destroyVertex(struct vertex *v);
+void destroyEdge(struct edge *e);
+
+void destroy(){
+	if(NULL != graph){
+		destroyVertex(graph);
+		graph = NULL;
+	}
+}
+
+
+void destroyVertex(struct vertex *v){
+	if(NULL != v->next){
+		destroyVertex(v->next);
+	}
+	destroyEdge(v->edges);
+	v->next = NULL;
+	v->edges = NULL;
+	free(v->action);
+	free(v);
+}
+
+void destroyEdge(struct edge *e){
+	if(NULL == e)
+		return;
+	if(NULL != e->next){
+		destroyEdge(e->next);
+	}
+	e->connectsTo = NULL;
+	e->next = NULL;
+	free(e);
 }
 
 
@@ -68,11 +106,11 @@ int isConnectTo(int state1, int state2){
 
 	struct vertex *v1 = getVertex(state1);
 
-	struct edge *e = v1->edges;
-	while(NULL != e){
-		if(e->connectsTo->state = state2)
+	struct edge *edgetemp = v1->edges;
+	while(NULL != edgetemp){
+		if(edgetemp->connectsTo->state == state2)
 			return 1;
-		e = e->connectsTo->edges;
+		edgetemp = edgetemp->next;
 	}
 	return 0;
 }
