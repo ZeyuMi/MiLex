@@ -36,20 +36,56 @@ int constructFromRE(char *postRE){
 	int startPoint = ++stateNum;
 	int pos = -1;
 	char c;
-
+	int start = end = -1;
 	while(1){
 		pos++;
 		c = *(postRE+pos);
-		if('|' == c){
-			
+		if('\0' == c){
+			temp = pop();
+			return temp.start;
+		}else if('|' == c){
+			struct NFASection temp1 = pop();
+			struct NFASection temp2 = pop();
+			start = ++stateNum;
+			end = ++stateNum;
+			addVertex(start);
+			addVertex(end);
+			addEdge(start, temp1.start, EPSILON);
+			addEdge(start, temp2.start, EPSILON);
+			addEdge(temp2.end, end, EPSILON);
+			addEdge(temp2.end, end, EPSILON);
+			struct NFASection temp = {start, end};
+			push(temp);
 		}else if('?' == c){
-
+			struct NFASection temp1 = pop();
+			addEdge(temp1.start, temp1.end, EPSILON);
+			push(temp1);
 		}else if('+' == c){
-
+			struct NFASection temp1 = pop();
+			addEdge(temp1.end, temp1.start, EPSILON);
+			push(temp1);
 		}else if('*' == c){
-
+			struct NFASection temp1 = pop();
+			addEdge(temp1.end, temp1.start, EPSILON);
+			start = ++stateNum;
+			end = ++stateNum;
+			addVertex(start);
+			addVertex(end);
+			addEdge(start, temp1.start, EPSILON);
+			addEdge(temp1.end, end, EPSILON);
+			addEdge(start, end, EPSILON);
+			struct NFASection temp = {start, end};
+			push(temp);
 		}else if(CONSYMBOL == c){
 		}else{
+			start = ++stateNum;
+			end = ++stateNum;
+			addVertex(start);
+			addVertex(end);
+			addEdge(start. )
+			addEdge(start, end, c);
+			struct NFASection temp = {start, end};
+			push(temp);
 		}
 	}
 }
