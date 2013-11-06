@@ -23,6 +23,12 @@ void constructNFA(){
 }
 
 
+struct NFASection{
+	int start;
+	int end;
+};
+
+
 void push(struct NFASection);
 struct NFASection pop();
 
