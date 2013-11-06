@@ -9,25 +9,25 @@
 int isOperator(char);
 int getPrecedence(char, int);
 char *infixToPostfix(char *origin){	
-	initialize();
+	initializeBuffer();
 	int pos = 0;
 	char c;
 	int doubleCharFlag = 0;
 	while('\0' != (c = *(origin+pos))){
 		if(isOperator(c)){
-			if(EMPTY == top()){
-				push(c);
+			if(EMPTY == topStack()){
+				pushStack(c);
 			}else{
 				if(')' == c){
-					while('(' != top()){
-						addElement(pop());
+					while('(' != topStack()){
+						addElement(popStack());
 					}
-					pop();	// pop '('
+					popStack();	// pop '('
 				}else{
-					while(EMPTY != top() && getPrecedence(top(), 1) >= getPrecedence(c, 0)){
-						addElement(pop());
+					while(EMPTY != topStack() && getPrecedence(topStack(), 1) >= getPrecedence(c, 0)){
+						addElement(popStack());
 					}
-					push(c);
+					pushStack(c);
 				}
 			}
 		}else{
@@ -35,14 +35,14 @@ char *infixToPostfix(char *origin){
 		}
 		pos++;
 	}
-	while(EMPTY != top()){
-		addElement(pop());
+	while(EMPTY != topStack()){
+		addElement(popStack());
 	}
 	addElement('\0');
 	char *s = getBuffer();
 	char *result = malloc(strlen(s) + 1);
 	strcpy(result, s);
-	destroy();
+	destroyBuffer();
 	return result;
 }
 

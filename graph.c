@@ -1,11 +1,8 @@
 #include <stdlib.h>
+#include <stdio.h>
 #include "graph.h"
 
 static struct vertex *graph = NULL;
-
-int isVertexExist(int);
-int isConnectTo(int, int);
-struct vertex *getVertex(int);
 
 
 int addVertex(int state, char *action){
@@ -58,11 +55,36 @@ int addEdge(int state1, int state2, char symbol){
 void destroyVertex(struct vertex *v);
 void destroyEdge(struct edge *e);
 
-void destroy(){
+void destroyGraph(){
 	if(NULL != graph){
 		destroyVertex(graph);
 		graph = NULL;
 	}
+}
+
+
+int addActionToVertex(int state, char *action){
+	if(!isVertexExist(state))
+		return 0;
+	struct vertex *temp = getVertex(state);
+	temp->action = action;
+	return 1;
+}
+
+
+void printGraph(){
+	struct vertex *vertexTemp = graph;
+	while(NULL != vertexTemp){
+		printf("vertex%d connects to ", vertexTemp->state);
+		struct edge *edgeTemp = vertexTemp->edges;
+		while(NULL != edgeTemp){
+			printf("vertex%d, ", edgeTemp->connectsTo->state);
+			edgeTemp = edgeTemp->next;
+		}
+		printf("\n");
+		vertexTemp = vertexTemp->next;
+	}
+	printf("\n");
 }
 
 

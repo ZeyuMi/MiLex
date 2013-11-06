@@ -1,8 +1,8 @@
-void initialize();
+void initializeBuffer();
 char *getBuffer();
 void addElement(char);
 void addElements(char *);
 void removeLast();
-void destroy();
+void destroyBuffer();
 void rewindPointer();
 int size();

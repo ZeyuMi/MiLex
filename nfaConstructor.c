@@ -6,17 +6,17 @@
 #include "graph.h"
 
 
-int constructFromRE(char *);
+int constructFromRE(char *, char *);
 
 int stateNum = 0;
 
 void constructNFA(){
 	struct REentry *retemp = regexps;
 	int startPoint = ++stateNum;
-
+	addVertex(startPoint, NULL);
 	while(NULL != retemp){
 		char *postfix = infixToPostfix(retemp->regexp);
-		int childgraph = constructFromRE(postfix);
+		int childgraph = constructFromRE(postfix, retemp->action);
 		addEdge(startPoint, childgraph, EPSILON);
 		retemp = retemp->next;
 	}
@@ -32,24 +32,26 @@ struct NFASection{
 void push(struct NFASection);
 struct NFASection pop();
 
-int constructFromRE(char *postRE){
+int constructFromRE(char *postRE, char *action){
 	int startPoint = ++stateNum;
 	int pos = -1;
 	char c;
-	int start = end = -1;
+	int start , end;
+	start = end = -1;
 	while(1){
 		pos++;
 		c = *(postRE+pos);
 		if('\0' == c){
-			temp = pop();
+			struct NFASection temp = pop();
+			addActionToVertex(temp.end, action);
 			return temp.start;
 		}else if('|' == c){
 			struct NFASection temp1 = pop();
 			struct NFASection temp2 = pop();
 			start = ++stateNum;
 			end = ++stateNum;
-			addVertex(start);
-			addVertex(end);
+			addVertex(start, NULL);
+			addVertex(end, NULL);
 			addEdge(start, temp1.start, EPSILON);
 			addEdge(start, temp2.start, EPSILON);
 			addEdge(temp2.end, end, EPSILON);
@@ -69,20 +71,24 @@ int constructFromRE(char *postRE){
 			addEdge(temp1.end, temp1.start, EPSILON);
 			start = ++stateNum;
 			end = ++stateNum;
-			addVertex(start);
-			addVertex(end);
+			addVertex(start, NULL);
+			addVertex(end, NULL);
 			addEdge(start, temp1.start, EPSILON);
 			addEdge(temp1.end, end, EPSILON);
 			addEdge(start, end, EPSILON);
 			struct NFASection temp = {start, end};
 			push(temp);
 		}else if(CONSYMBOL == c){
+			struct NFASection temp2 = pop();
+			struct NFASection temp1 = pop();
+			addEdge(temp1.end, temp2.start, EPSILON);
+			struct NFASection temp = {temp1.start, temp2.end};
+			push(temp);
 		}else{
 			start = ++stateNum;
 			end = ++stateNum;
-			addVertex(start);
-			addVertex(end);
-			addEdge(start. )
+			addVertex(start, NULL);
+			addVertex(end, NULL);
 			addEdge(start, end, c);
 			struct NFASection temp = {start, end};
 			push(temp);

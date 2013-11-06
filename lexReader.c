@@ -54,7 +54,7 @@ void insertFuncEntry(char *);
 
 struct Defentry *defp = NULL;
 int readDeclareSec(){
-	initialize();
+	initializeBuffer();
 	int state = STATE0;
 	while(1){
 		int c = getch();
@@ -161,7 +161,7 @@ int readDeclareSec(){
 					state = STATE10;
 				}else if('%' == c){
 					state = STATE0;
-					destroy();
+					destroyBuffer();
 					return 1;
 				}else{
 					error("lexReader readDeclareSec STATE9");
@@ -193,7 +193,7 @@ int readDeclareSec(){
 
 struct REentry *rep = NULL;
 int readRESec(){
-	initialize();
+	initializeBuffer();
 	int state = STATE0;
 	while(1){
 		char c = getch();
@@ -297,7 +297,7 @@ int readRESec(){
 			case STATE9:
 				if('%' == c){
 					state = STATE0;
-					destroy();
+					destroyBuffer();
 					return 1;
 				}
 				break;
@@ -310,7 +310,7 @@ int readRESec(){
 struct Funcentry *funcp = NULL;
 int readFuncSec(){
 	int leftBraceNum = 0;
-	initialize();
+	initializeBuffer();
 	int state = STATE0;
 	while(1){
 		char c = getch();
@@ -318,7 +318,7 @@ int readFuncSec(){
 			if(state != STATE0)
 				return ERROR;
 			else{
-				destroy();
+				destroyBuffer();
 				return 1;
 			}
 		}

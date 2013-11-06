@@ -111,7 +111,7 @@ char *getStr(char *);
 void error1();
 
 char *fillCharClass(char *origin){
-	initialize();
+	initializeBuffer();
 	int pos = -1;
 	int orilen = strlen(origin);
 	int state = STATE0;
@@ -234,7 +234,7 @@ char *fillCharClass(char *origin){
 	char *s = getBuffer();
 	char *result = malloc(strlen(s) + 1);
 	strcpy(result, s);
-	destroy();
+	destroyBuffer();
 	return result;
 }
 
@@ -271,7 +271,7 @@ char *getStr(char *buf){
 
 
 char *substituteCharClass(char *origin){
-	initialize();
+	initializeBuffer();
 	int pos = -1;
 	int orilen = strlen(origin);
 	int state = STATE0;
@@ -325,13 +325,13 @@ char *substituteCharClass(char *origin){
 	char *s = getBuffer();
 	char *result = malloc(strlen(s) + 1);
 	strcpy(result, s);
-	destroy();
+	destroyBuffer();
 	return result;
 }
 
 
 char *removeDoubleQuote(char *origin){
-	initialize();
+	initializeBuffer();
 	int pos = -1;
 	int orilen = strlen(origin);
 	int state = STATE0;
@@ -365,13 +365,13 @@ char *removeDoubleQuote(char *origin){
 	char *s = getBuffer();
 	char *result = malloc(strlen(s) + 1);
 	strcpy(result, s);
-	destroy();
+	destroyBuffer();
 	return result;
 }
 
 
 char *addConSymbol(char *origin){
-	initialize();
+	initializeBuffer();
 	int pos = -1;
 	int orilen = strlen(origin);
 	int state = STATE0;
@@ -435,7 +435,7 @@ char *addConSymbol(char *origin){
 	char *s = getBuffer();
 	char *result = malloc(strlen(s) + 1);
 	strcpy(result, s);
-	destroy();
+	destroyBuffer();
 	return result;
 
 }

@@ -1,39 +1,23 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include "../lex.h"
+#include "../graph.h"
 #include "../nfaConstructor.h"
 
-void testStackSuccessfully();
-void testStackFailed();
-void testStackDoubleSize();
+struct REentry *regexps = NULL;
+
+void testConstructNFA();
 
 int main(){
-	testStackSuccessfully();
-	testStackFailed();
-	testStackDoubleSize();
+	testConstructNFA();
 	return 0;
 }
 
-void testStackSuccessfully(){
-	struct NFASection a = {1,1};
-	push(a);
-	struct NFASection b = pop();
-	printf("%d, %d\n", b.start, b.end);
+void testConstructNFA(){
+	struct REentry *regexps = malloc(sizeof(struct REentry));
+	regexps->regexp = "1*|a";
+	regexps->action = "printf;";
+	constructNFA();
+	printGraph();
 }
 
-
-void testStackFailed(){
-	struct NFASection c = pop();
-	printf("%d, %d\n", c.start, c.end);
-}
-
-
-void testStackDoubleSize(){
-	struct NFASection a = {1,1};
-	push(a);
-	a.start = 2;
-	a.end = 2;
-	push(a);
-	struct NFASection b = pop();
-	printf("%d, %d\n", b.start, b.end);
-	b = pop();
-	printf("%d, %d\n", b.start, b.end);
-}

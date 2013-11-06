@@ -8,7 +8,7 @@ static char *topp = NULL;
 static int size;
 
 
-char top(){
+char topStack(){
 	if(NULL == stack){
 		return EMPTY;
 	}else if(topp == stack){
@@ -19,7 +19,7 @@ char top(){
 }
 
 
-char pop(){
+char popStack(){
 	if(NULL == stack){
 		return EMPTY;
 	}else if(topp == stack){
@@ -30,7 +30,7 @@ char pop(){
 }
 
 
-void push(char c){
+void pushStack(char c){
 	if(NULL == stack){
 		size = DEFAULT;
 		topp = stack = malloc(size);

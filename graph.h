@@ -17,10 +17,14 @@ int addVertex(int, char *);
 
 int addEdge(int, int, char);
 
-void destroy();
+void destroyGraph();
 
 int isVertexExists(int);
 
 int isConnectTo(int, int);
 
 struct vertex *getVertex(int);
+
+int addActionToVertex(int, char *);
+
+void printGraph();

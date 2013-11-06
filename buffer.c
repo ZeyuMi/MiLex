@@ -11,7 +11,7 @@ static char *bufp = NULL;
 
 void memError();
 
-void initialize(){
+void initializeBuffer(){
 	buffersize = DEFAULT;
 	buffer = malloc(buffersize);
 	if(buffer == NULL)
@@ -56,7 +56,7 @@ void removeLast(){
 }
 
 
-void destroy(){
+void destroyBuffer(){
 	buffersize = 0;
 	free(buffer);
 	buffer = bufp = NULL;
