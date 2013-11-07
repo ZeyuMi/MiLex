@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "graph.h"
+#include "buffer.h"
 
 static struct vertex *graph = NULL;
 
@@ -60,6 +61,27 @@ void destroyGraph(){
 		destroyVertex(graph);
 		graph = NULL;
 	}
+}
+
+/*
+	the returned pointer points to a allocated memory
+*/
+int *reachByEdgeSymbol(int state, char symbol){
+	if(!isVertexExist(state))
+		return NULL;
+	initializeIntBuffer();
+	struct vertex *vertexTemp = getVertex(state);
+	struct edge *edgeTemp = vertexTemp->edges;
+	while(NULL != edgeTemp){
+		if(symbol == edgeTemp->symbol)
+			addIntElement(edgeTemp->connectsTo->state);
+		edgeTemp = edgeTemp->next;
+	}
+	addIntElement(-1);
+	int *result = malloc(intSize() * sizeof(int));
+	fillIntArrayWithBuffer(result);
+	destroyIntBuffer();
+	return result;
 }
 
 

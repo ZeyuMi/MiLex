@@ -19,7 +19,7 @@ int addEdge(int, int, char);
 
 void destroyGraph();
 
-int isVertexExists(int);
+int isVertexExist(int);
 
 int isConnectTo(int, int);
 
@@ -28,3 +28,5 @@ struct vertex *getVertex(int);
 int addActionToVertex(int, char *);
 
 void printGraph();
+
+int *reachByEdgeSymbol(int, char);

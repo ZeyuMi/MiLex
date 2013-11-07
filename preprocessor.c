@@ -112,7 +112,7 @@ enum states{ STATE0 = 1,
 char *getStr(char *);
 
 char *fillCharClass(char *origin){
-	initializeBuffer();
+	initializeCharBuffer();
 	int pos = -1;
 	int orilen = strlen(origin);
 	int state = STATE0;
@@ -126,22 +126,22 @@ char *fillCharClass(char *origin){
 			case STATE0:
 				if('[' == c){
 					state = STATE1;
-					addElement(c);
+					addCharElement(c);
 				}else if('\\' == c){
 					state = STATE8;
-					addElement(c);
+					addCharElement(c);
 				}else if('.' == c){
 					state = STATE0;
-					addElements("[ !\\\"#$%&'\\(\\)\\*\\+,-./0123456789:;<=>\\?@ABCDEFGHIJKLMNOPQRSTUVWXYZ\\[\\\\\\]^_`abcdefghijklmnopqrstuvwxyz{\\|}~]");
+					addCharElements("[ !\\\"#$%&'\\(\\)\\*\\+,-./0123456789:;<=>\\?@ABCDEFGHIJKLMNOPQRSTUVWXYZ\\[\\\\\\]^_`abcdefghijklmnopqrstuvwxyz{\\|}~]");
 				}else{
 					state = STATE0;
-					addElement(c);
+					addCharElement(c);
 				}
 				break;
 			case STATE1:
 				if(']' == c){
 					state = STATE0;
-					addElement(c);
+					addCharElement(c);
 				}else if('A' <= c && 'Z' >= c){
 					state = STATE2;
 					buf[0] = c;
@@ -153,7 +153,7 @@ char *fillCharClass(char *origin){
 					buf[0] = c;
 				}else{
 					state = STATE1;
-					addElement(c);
+					addCharElement(c);
 				}
 				break;
 			case STATE2:
@@ -162,7 +162,7 @@ char *fillCharClass(char *origin){
 					buf[1] = c;
 				}else{
 					state = STATE1;
-					addElement(buf[0]);
+					addCharElement(buf[0]);
 					pos--;
 				}
 				break;
@@ -171,11 +171,11 @@ char *fillCharClass(char *origin){
 				if('A' <= c && 'Z' >= c){
 					buf[2] = c;
 					char *s = getStr(buf);
-					addElements(s);
+					addCharElements(s);
 					free(s);
 				}else{
-					addElement(buf[0]);
-					addElement(buf[1]);
+					addCharElement(buf[0]);
+					addCharElement(buf[1]);
 					pos--;
 				}
 				break;
@@ -185,7 +185,7 @@ char *fillCharClass(char *origin){
 					buf[1] = c;
 				}else{
 					state = STATE1;
-					addElement(buf[0]);
+					addCharElement(buf[0]);
 					pos--;
 				}
 				break;
@@ -194,11 +194,11 @@ char *fillCharClass(char *origin){
 				if('a' <= c && 'z' >= c){
 					buf[2] = c;
 					char *s = getStr(buf);
-					addElements(s);
+					addCharElements(s);
 					free(s);
 				}else{
-					addElement(buf[0]);
-					addElement(buf[1]);
+					addCharElement(buf[0]);
+					addCharElement(buf[1]);
 					pos--;
 				}
 				break;
@@ -208,7 +208,7 @@ char *fillCharClass(char *origin){
 					buf[1] = c;
 				}else{
 					state = STATE1;
-					addElement(buf[0]);
+					addCharElement(buf[0]);
 					pos--;
 				}
 				break;
@@ -217,28 +217,28 @@ char *fillCharClass(char *origin){
 				if('0' <= c && '9' >= c){
 					buf[2] = c;
 					char *s = getStr(buf);
-					addElements(s);
+					addCharElements(s);
 					free(s);
 				}else{
-					addElement(buf[0]);
-					addElement(buf[1]);
+					addCharElement(buf[0]);
+					addCharElement(buf[1]);
 					pos--;
 				}
 				break;
 			case STATE8:
 				state = STATE0;
-				addElement(c);
+				addCharElement(c);
 				break;
 			default:
 				error("entering wrong state");
 		}
 	}
 	free(origin); // free the origin string
-	addElement('\0');
-	char *s = getBuffer();
+	addCharElement('\0');
+	char *s = getCharBuffer();
 	char *result = malloc(strlen(s) + 1);
 	strcpy(result, s);
-	destroyBuffer();
+	destroyCharBuffer();
 	return result;
 }
 
@@ -275,7 +275,7 @@ char *getStr(char *buf){
 
 
 char *substituteCharClass(char *origin){
-	initializeBuffer();
+	initializeCharBuffer();
 	int pos = -1;
 	int orilen = strlen(origin);
 	int state = STATE0;
@@ -288,54 +288,54 @@ char *substituteCharClass(char *origin){
 			case STATE0:
 				if('[' == c){
 					state = STATE1;
-					addElement('(');
+					addCharElement('(');
 				}else if('\\' == c){
 					state = STATE3;
-					addElement(c);
+					addCharElement(c);
 				}else{
 					state = STATE0;
-					addElement(c);
+					addCharElement(c);
 				}
 				break;
 			case STATE1:
 				if('\\' == c){
 					state = STATE2;
-					addElement(c);
+					addCharElement(c);
 				}else if(']' == c){
 					state = STATE0;
-					removeLast();
-					addElement(')');
+					removeCharLast();
+					addCharElement(')');
 				}else{
 					state = STATE1;
-					addElement(c);
-					addElement('|');
+					addCharElement(c);
+					addCharElement('|');
 				}
 				break;
 			case STATE2:
 				state = STATE1;
-				addElement(c);
-				addElement('|');
+				addCharElement(c);
+				addCharElement('|');
 				break;
 			case STATE3:
 				state = STATE0;
-				addElement(c);
+				addCharElement(c);
 				break;
 			default:
 				error("entering wrong state");
 		}
 	}
 	free(origin);
-	addElement('\0');
-	char *s = getBuffer();
+	addCharElement('\0');
+	char *s = getCharBuffer();
 	char *result = malloc(strlen(s) + 1);
 	strcpy(result, s);
-	destroyBuffer();
+	destroyCharBuffer();
 	return result;
 }
 
 
 char *substituteEscapeChar(char *origin){
-	initializeBuffer();
+	initializeCharBuffer();
 	int pos = -1;
 	int orilen = strlen(origin);
 	int state = STATE0;
@@ -350,20 +350,20 @@ char *substituteEscapeChar(char *origin){
 					state = STATE1;
 				}else{
 					state = STATE0;
-					addElement(c);
+					addCharElement(c);
 				}
 				break;
 			case STATE1:
 				state = STATE0;
 				if('r' == c){
-					addElement(RETURN);	
+					addCharElement(RETURN);	
 				}else if('t' == c){
-					addElement(TAB);
+					addCharElement(TAB);
 				}else if('n' == c){
-					addElement(NEWLINE);
+					addCharElement(NEWLINE);
 				}else{
-					addElement('\\');
-					addElement(c);
+					addCharElement('\\');
+					addCharElement(c);
 				}
 				break;
 			default:
@@ -371,17 +371,17 @@ char *substituteEscapeChar(char *origin){
 		}
 	}
 	free(origin);
-	addElement('\0');
-	char *s = getBuffer();
+	addCharElement('\0');
+	char *s = getCharBuffer();
 	char *result = malloc(strlen(s) + 1);
 	strcpy(result, s);
-	destroyBuffer();
+	destroyCharBuffer();
 	return result;
 }
 
 
 char *removeDoubleQuote(char *origin){
-	initializeBuffer();
+	initializeCharBuffer();
 	int pos = -1;
 	int orilen = strlen(origin);
 	int state = STATE0;
@@ -396,32 +396,32 @@ char *removeDoubleQuote(char *origin){
 					state = STATE0;
 				}else if('\\' == c){
 					state = STATE1;
-					addElement(c);
+					addCharElement(c);
 				}else{
 					state = STATE0;
-					addElement(c);
+					addCharElement(c);
 				}
 				break;
 			case STATE1:
 				state = STATE0;
-				addElement(c);
+				addCharElement(c);
 				break;
 			default:
 				error("entering wrong state");
 		}
 	}
 	free(origin);
-	addElement('\0');
-	char *s = getBuffer();
+	addCharElement('\0');
+	char *s = getCharBuffer();
 	char *result = malloc(strlen(s) + 1);
 	strcpy(result, s);
-	destroyBuffer();
+	destroyCharBuffer();
 	return result;
 }
 
 
 char *addConSymbol(char *origin){
-	initializeBuffer();
+	initializeCharBuffer();
 	int pos = -1;
 	int orilen = strlen(origin);
 	int state = STATE0;
@@ -434,16 +434,16 @@ char *addConSymbol(char *origin){
 			case STATE0:
 				if('|' == c || '(' == c){
 					state = STATE0;
-					addElement(c);
+					addCharElement(c);
 				}else if('?' == c || '*' == c || '+' == c){
 					state = STATE1;
-					addElement(c);
+					addCharElement(c);
 				}else if('\\' == c){
 					state = STATE3;
-					addElement(c);
+					addCharElement(c);
 				}else{
 					state = STATE2;
-					addElement(c);
+					addCharElement(c);
 				}
 				break;
 			case STATE1:
@@ -452,13 +452,13 @@ char *addConSymbol(char *origin){
 					pos--;
 				}else if(')' == c){
 					state = STATE0;
-					addElement(c);
+					addCharElement(c);
 				}else if((pos+1) >= orilen){
 					state = STATE0;
-					addElement(c);
+					addCharElement(c);
 				}else{
 					state = STATE0;
-					addElement(CONSYMBOL);
+					addCharElement(CONSYMBOL);
 					pos--;
 				}
 				break;
@@ -468,24 +468,24 @@ char *addConSymbol(char *origin){
 					pos--;
 				}else{
 					state = STATE0;
-					addElement(CONSYMBOL);
+					addCharElement(CONSYMBOL);
 					pos--;
 				}
 				break;
 			case STATE3:
 				state = STATE0;
-				addElement(c);
+				addCharElement(c);
 				break;
 			default:
 				error("entering wrong state");
 		}
 	}
 	free(origin);
-	addElement('\0');
-	char *s = getBuffer();
+	addCharElement('\0');
+	char *s = getCharBuffer();
 	char *result = malloc(strlen(s) + 1);
 	strcpy(result, s);
-	destroyBuffer();
+	destroyCharBuffer();
 	return result;
 
 }

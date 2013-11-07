@@ -4,72 +4,135 @@
 
 #define DEFAULT 100 
 
-static int buffersize = 0;
+static int charBuffersize = 0;
+static int intBuffersize = 0;
 
-static char *buffer = NULL;
-static char *bufp = NULL;
+static char *charBuffer = NULL;
+static char *charBufp = NULL;
+
+static int *intBuffer = NULL;
+static int *intBufp = NULL;
 
 void memError();
 
-void initializeBuffer(){
-	buffersize = DEFAULT;
-	buffer = malloc(buffersize);
-	if(buffer == NULL)
+void initializeCharBuffer(){
+	charBuffersize = DEFAULT;
+	charBuffer = malloc(charBuffersize);
+	if(charBuffer == NULL)
 		memError();
-	bufp = buffer;
+	charBufp = charBuffer;
+}
+
+void initializeIntBuffer(){
+	intBuffersize = DEFAULT;
+	intBuffer = malloc(sizeof(int) * intBuffersize);
+	if(intBuffer == NULL)
+		memError();
+	intBufp = intBuffer;
+}
+
+char *getCharBuffer(){
+	return charBuffer;
 }
 
 
-char *getBuffer(){
-	return buffer;
-}
-
-
-void addElement(char c){
-	if(bufp - buffer >= buffersize){
-		buffersize *= 2;
-		char *old = buffer;
-		buffer = malloc(buffersize);
-		if(buffer == NULL)
+void addCharElement(char c){
+	if(charBufp - charBuffer >= charBuffersize){
+		charBuffersize *= 2;
+		char *old = charBuffer;
+		charBuffer = malloc(charBuffersize);
+		if(charBuffer == NULL)
 			memError();
-		memcpy((void *)buffer, (void *)old, buffersize/2);
+		memcpy((void *)charBuffer, (void *)old, charBuffersize/2);
 		free(old);
-		bufp = buffer + (buffersize/2);
+		charBufp = charBuffer + (charBuffersize/2);
 	}
-	*bufp++ = c;
+	*charBufp++ = c;
 }
 
 
-void addElements(char *s){
+void addIntElement(int i){
+	if(intBufp - intBuffer >= intBuffersize){
+		intBuffersize *= 2;
+		int *old = intBuffer;
+		intBuffer = malloc(sizeof(int) * intBuffersize);
+		if(intBuffer == NULL)
+			memError();
+		memcpy((void *)charBuffer, (void *)old, sizeof(int) * (charBuffersize/2));
+		free(old);
+		intBufp = intBuffer + (charBuffersize/2);
+	}
+	*intBufp++ = i;
+}
+
+
+void addCharElements(char *s){
 	while('\0' != *s){
-		addElement(*s);
+		addCharElement(*s);
 		s++;
 	}
 }
 
 
-void removeLast(){
-	if(bufp == buffer)
+void removeCharLast(){
+	if(charBufp == charBuffer)
 		return;
 	else
-		bufp--;
+		charBufp--;
 }
 
 
-void destroyBuffer(){
-	buffersize = 0;
-	free(buffer);
-	buffer = bufp = NULL;
+void removeIntLast(){
+	if(intBufp == intBuffer)
+		return;
+	else
+		intBufp--;
 }
 
 
-void rewindPointer(){
-	bufp = buffer;
+void destroyCharBuffer(){
+	charBuffersize = 0;
+	free(charBuffer);
+	charBuffer = charBufp = NULL;
 }
 
-int size(){
-	return bufp - buffer;
+
+void destroyIntBuffer(){
+	intBuffersize = 0;
+	free(intBuffer);
+	intBuffer = intBufp = NULL;
 }
+
+
+void rewindCharPointer(){
+	charBufp = charBuffer;
+}
+
+
+void rewindIntPointer(){
+	intBufp = intBuffer;
+}
+
+
+int charSize(){
+	return charBufp - charBuffer;
+}
+
+
+int intSize(){
+	return intBufp - intBuffer;
+}
+
+
+void fillIntArrayWithBuffer(int *array){
+	int size = intSize();
+	int i = 0;
+	while(i < size){
+		*(array+i) = *(intBuffer+i);
+		i++;
+	}
+}
+
 
 void memError(){
 	fprintf(stderr, "memory error!\n");
