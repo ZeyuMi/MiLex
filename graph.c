@@ -78,7 +78,7 @@ void printGraph(){
 		printf("vertex%d connects to ", vertexTemp->state);
 		struct edge *edgeTemp = vertexTemp->edges;
 		while(NULL != edgeTemp){
-			printf("vertex%d, ", edgeTemp->connectsTo->state);
+			printf("vertex%d labeled %c, ", edgeTemp->connectsTo->state, edgeTemp->symbol);
 			edgeTemp = edgeTemp->next;
 		}
 		printf("\n");

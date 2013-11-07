@@ -14,7 +14,7 @@ int main(){
 }
 
 void testConstructNFA(){
-	struct REentry *regexps = malloc(sizeof(struct REentry));
+	regexps = malloc(sizeof(struct REentry));
 	regexps->regexp = "1*|a";
 	regexps->action = "printf;";
 	constructNFA();
