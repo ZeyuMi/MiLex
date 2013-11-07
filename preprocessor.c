@@ -400,7 +400,7 @@ char *addConSymbol(char *origin){
 				if('|' == c){
 					state = STATE0;
 					pos--;
-				}else if(')'){
+				}else if(')' == c){
 					state = STATE0;
 					addElement(c);
 				}else if((pos+1) >= orilen){
@@ -409,7 +409,7 @@ char *addConSymbol(char *origin){
 				}else{
 					state = STATE0;
 					addElement(CONSYMBOL);
-					addElement(c);
+					pos--;
 				}
 				break;
 			case STATE2:

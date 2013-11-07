@@ -18,8 +18,15 @@ void constructNFA(){
 		char *postfix = infixToPostfix(retemp->regexp);
 		int childgraph = constructFromRE(postfix, retemp->action);
 		addEdge(startPoint, childgraph, EPSILON);
+		free(postfix);
 		retemp = retemp->next;
 	}
+}
+
+
+void destroyNFA(){
+	stateNum = 0;
+	destroyGraph();
 }
 
 
@@ -33,7 +40,6 @@ void push(struct NFASection);
 struct NFASection pop();
 
 int constructFromRE(char *postRE, char *action){
-	int startPoint = ++stateNum;
 	int pos = -1;
 	char c;
 	int start , end;
@@ -54,7 +60,7 @@ int constructFromRE(char *postRE, char *action){
 			addVertex(end, NULL);
 			addEdge(start, temp1.start, EPSILON);
 			addEdge(start, temp2.start, EPSILON);
-			addEdge(temp2.end, end, EPSILON);
+			addEdge(temp1.end, end, EPSILON);
 			addEdge(temp2.end, end, EPSILON);
 			struct NFASection temp = {start, end};
 			push(temp);

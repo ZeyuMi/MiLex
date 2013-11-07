@@ -1,1 +1,2 @@
 void constructNFA();
+void destroyNFA();

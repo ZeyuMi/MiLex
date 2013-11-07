@@ -81,6 +81,8 @@ void printGraph(){
 			printf("vertex%d labeled %c, ", edgeTemp->connectsTo->state, edgeTemp->symbol);
 			edgeTemp = edgeTemp->next;
 		}
+		if(NULL != vertexTemp->action)
+			printf("action is %s.", vertexTemp->action);
 		printf("\n");
 		vertexTemp = vertexTemp->next;
 	}
@@ -95,7 +97,7 @@ void destroyVertex(struct vertex *v){
 	destroyEdge(v->edges);
 	v->next = NULL;
 	v->edges = NULL;
-	free(v->action);
+	v->action = NULL;
 	free(v);
 }
 
