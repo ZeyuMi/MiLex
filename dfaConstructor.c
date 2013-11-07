@@ -2,6 +2,8 @@
 #include "lex.h"
 #include "dfaConstructor.h"
 #include "graph.h"
+#include "stack.h"
+#include "buffer.h"
 
 int *move(int *, char);
 int *epsilonClosure(int *);
@@ -33,7 +35,24 @@ int *move(int *stateSet, char c){
 
 
 int *epsilonClosure(int *stateSet){
-	
+	clearStack();
+	int temp = -1;
+	initializeIntBuffer();
+	while(-1 != (temp = *(stateSet++))){
+		addIntElement(temp);
+		push(temp);
+	}
+	while(EMPTY != (temp = pop())){
+		int *reach = reachByEdgeSymbol(temp, EPSILON);
+		int tempState = -1;
+		while(-1 != (tempState = *(reach++))){
+			if(isInArray()){
+				addIntElement(tempState);
+				push(tempState);
+			}
+		}
+	}
+
 }
 
 
@@ -46,7 +65,7 @@ int *mergeIntArrays(int *arrayA, int *arrayB){
 	while(-1 != *(arrayB+(sizeB++)))
 		;
 	int size = sizeA + sizeB - 1;
-	int result = malloc(sizeof(int) * size);
+	int* result = malloc(sizeof(int) * size);
 	int i = 0;
 	int j = 0;
 	while(i < sizeA-1){
