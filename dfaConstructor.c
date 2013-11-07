@@ -33,7 +33,9 @@ int *move(int *stateSet, char c){
 	return result;
 }
 
-
+/*
+	the returned pointer points to a allocated memory
+*/
 int *epsilonClosure(int *stateSet){
 	clearStack();
 	int temp = -1;
@@ -46,13 +48,17 @@ int *epsilonClosure(int *stateSet){
 		int *reach = reachByEdgeSymbol(temp, EPSILON);
 		int tempState = -1;
 		while(-1 != (tempState = *(reach++))){
-			if(isInArray()){
+			if(!isInIntBuffer(tempState)){
 				addIntElement(tempState);
 				push(tempState);
 			}
 		}
 	}
-
+	addIntElement(-1);
+	int *result = malloc(intSize() * sizeof(int));
+	fillIntArrayWithBuffer(result);
+	destroyIntBuffer();
+	return result;
 }
 
 

@@ -134,6 +134,17 @@ void fillIntArrayWithBuffer(int *array){
 }
 
 
+int isInIntBuffer(int i){
+	int *temp = intBuffer;
+	while(temp != intBufp){
+		if(*temp == i)
+			return 1;
+		temp++;
+	}
+	return 0;
+}
+
+
 void memError(){
 	fprintf(stderr, "memory error!\n");
 	exit(EXIT_FAILURE);

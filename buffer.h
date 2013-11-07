@@ -13,3 +13,4 @@ void destroyIntBuffer();
 void rewindIntPointer();
 int intSize();
 void fillIntArrayWithBuffer(int *);
+int isInIntBuffer(int);
