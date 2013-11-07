@@ -48,6 +48,7 @@ void replaceAllDef(){
 
 char *fillCharClass(char *);
 char *substituteCharClass(char *);
+char *substituteEscapeChar(char *);
 char *removeDoubleQuote(char *);
 char *addConSymbol(char *);
 
@@ -55,6 +56,7 @@ char *addConSymbol(char *);
 void substitute(){
 	struct REentry *retemp = regexps;
 	while(NULL != retemp){
+		retemp->regexp = substituteEscapeChar(retemp->regexp);
 		retemp->regexp = fillCharClass(retemp->regexp);
 		retemp->regexp = substituteCharClass(retemp->regexp);
 		retemp->regexp = removeDoubleQuote(retemp->regexp);
@@ -315,6 +317,52 @@ char *substituteCharClass(char *origin){
 			case STATE3:
 				state = STATE0;
 				addElement(c);
+				break;
+			default:
+				error("entering wrong state");
+		}
+	}
+	free(origin);
+	addElement('\0');
+	char *s = getBuffer();
+	char *result = malloc(strlen(s) + 1);
+	strcpy(result, s);
+	destroyBuffer();
+	return result;
+}
+
+
+char *substituteEscapeChar(char *origin){
+	initializeBuffer();
+	int pos = -1;
+	int orilen = strlen(origin);
+	int state = STATE0;
+	while(1){
+		pos++;
+		if(pos >= orilen)
+			break;
+		char c = *(origin+pos);
+		switch(state){
+			case STATE0:
+				if('\\' == c){
+					state = STATE1;
+				}else{
+					state = STATE0;
+					addElement(c);
+				}
+				break;
+			case STATE1:
+				state = STATE0;
+				if('r' == c){
+					addElement(RETURN);	
+				}else if('t' == c){
+					addElement(TAB);
+				}else if('n' == c){
+					addElement(NEWLINE);
+				}else{
+					addElement('\\');
+					addElement(c);
+				}
 				break;
 			default:
 				error("entering wrong state");

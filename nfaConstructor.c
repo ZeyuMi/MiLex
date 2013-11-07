@@ -21,6 +21,7 @@ void constructNFA(){
 		free(postfix);
 		retemp = retemp->next;
 	}
+	printGraph();
 }
 
 
@@ -91,6 +92,12 @@ int constructFromRE(char *postRE, char *action){
 			struct NFASection temp = {temp1.start, temp2.end};
 			push(temp);
 		}else{
+			if('\\' == c){
+				pos++;
+				c = *(postRE+pos);
+			}
+			if('\0' == c)
+				error("invalid Regular expression.");
 			start = ++stateNum;
 			end = ++stateNum;
 			addVertex(start, NULL);

@@ -30,8 +30,8 @@ int main(int argc, char **argv){
 			fprintf(stderr, "the format of %s does not conform to MiLex\n", filename);
 			return 1;
 		}
-//		output();
 		preprocess();
+		output();
 		constructNFA();
 		constructDFA();
 		optimizeDFA();
@@ -46,18 +46,18 @@ int main(int argc, char **argv){
 void output(){
 	struct Defentry *p = definitions;
 	while(NULL != p){
-		fprintf(stdout, "%s : %s\n", p->name, p->definition);
+		printf("%s : %s\n", p->name, p->definition);
 		p = p->next;
 	}
-	fprintf(stdout, "%s\n", declarations);
+	printf("%s\n", declarations);
 	struct REentry *e = regexps;
 	while(NULL != e){
-		fprintf(stdout, "%s : %s\n", e->regexp, e->action);
+		printf("%s : %s\n", e->regexp, e->action);
 		e = e->next;
 	}
 	struct Funcentry *f = additionalfuncs;
 	while(NULL != f){
-		fprintf(stdout, "%s\n", f->body);
+		printf("%s\n", f->body);
 		f = f->next;
 	}
 }

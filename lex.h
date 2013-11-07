@@ -21,3 +21,6 @@ extern struct REentry *regexps;
 extern struct Funcentry *additionalfuncs;
 
 #define CONSYMBOL -2
+#define NEWLINE -3
+#define TAB -4
+#define RETURN -5
