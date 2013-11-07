@@ -110,7 +110,6 @@ enum states{ STATE0 = 1,
 				STATE8,
 				};
 char *getStr(char *);
-void error1();
 
 char *fillCharClass(char *origin){
 	initializeBuffer();
@@ -131,6 +130,9 @@ char *fillCharClass(char *origin){
 				}else if('\\' == c){
 					state = STATE8;
 					addElement(c);
+				}else if('.' == c){
+					state = STATE0;
+					addElements("[ !\\\"#$%&'\\(\\)\\*\\+,-./0123456789:;<=>\\?@ABCDEFGHIJKLMNOPQRSTUVWXYZ\\[\\\\\\]^_`abcdefghijklmnopqrstuvwxyz{\\|}~]");
 				}else{
 					state = STATE0;
 					addElement(c);
