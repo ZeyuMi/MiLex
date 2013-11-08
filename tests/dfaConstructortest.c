@@ -40,7 +40,7 @@ void testConstructDFA1(){
 
 void testConstructDFA2(){
 	regexps = malloc(sizeof(struct REentry));
-	char *s = "(a|b)*abb(a|b)*";
+	char *s = "(a|b)*a(a|b)";
 	regexps->regexp = malloc(strlen(s));
 	strcpy(regexps->regexp, s);
 	regexps->action = "printf;";
