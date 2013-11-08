@@ -5,6 +5,7 @@
 typedef struct dfaTTEntry{
 	int state;
 	int *trans;
+	char *action;
 	struct dfaTTEntry *next;
 }ttEntry;
 
@@ -13,7 +14,7 @@ static ttEntry *table = NULL;
 
 ttEntry *getEntry(int);
 
-void addDFANewState(int state){
+void addDFANewState(int state, char *action){
 	ttEntry *temp = getEntry(state);
 	if(NULL != temp)
 		return;
@@ -26,6 +27,7 @@ void addDFANewState(int state){
 	temp = malloc(sizeof(ttEntry));
 	temp->state = state;
 	temp->trans = malloc(sizeof(int) * 128);
+	temp->action = action;
 	int i = 0;
 	while(i < 128){
 		(temp->trans)[i] = 0;
@@ -69,8 +71,10 @@ void printDFATransTable(){
 				printf("connects to state%d by %c,", (temp->trans)[i], i);
 			i++;
 		}
-		temp = temp->next;
+		if(NULL != temp->action)
+			printf("action is %s", temp->action);
 		printf("\n");
+		temp = temp->next;
 	}
 	printf("\n");
 }

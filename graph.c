@@ -94,6 +94,18 @@ int addActionToVertex(int state, char *action){
 }
 
 
+char *getAction(int *states){
+	int temp = 0;
+	while(-1 != (temp = *states)){
+		struct vertex *vertexTemp = getVertex(temp);
+		if(NULL != vertexTemp && NULL != vertexTemp->action)
+			return vertexTemp->action;
+		states++;
+	}
+	return NULL;
+}
+
+
 void printGraph(){
 	struct vertex *vertexTemp = graph;
 	while(NULL != vertexTemp){

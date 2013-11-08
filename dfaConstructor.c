@@ -17,7 +17,8 @@ void constructDFA(){
 	int firstNFAState[2] = {startPoint, -1};
 	int *nfaClosure = epsilonClosure(firstNFAState);
 	int dfaState = installState(nfaClosure);
-	addDFANewState(dfaState);
+	char *action = getAction(nfaClosure);
+	addDFANewState(dfaState, action);
 	while(unmarkedStatesExist()){
 		int state = getUnmarkedState();
 		markState(state);
@@ -30,7 +31,8 @@ void constructDFA(){
 			if(-1 == closure[0])
 				continue;
 			dfaState = installState(closure);
-			addDFANewState(dfaState);
+			char *action = getAction(closure);
+			addDFANewState(dfaState, action);
 			addDFATransTableEntry(state, dfaState, c);
 		}
 	}

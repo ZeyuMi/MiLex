@@ -32,3 +32,5 @@ void printGraph();
 int *reachByEdgeSymbol(int, char);
 
 struct vertex *getGraph();
+
+char *getAction(int *);
