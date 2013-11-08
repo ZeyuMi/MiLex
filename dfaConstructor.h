@@ -1,1 +1,2 @@
 void constructDFA();
+void destroyDFA();

@@ -132,7 +132,9 @@ char *fillCharClass(char *origin){
 					addCharElement(c);
 				}else if('.' == c){
 					state = STATE0;
+					addCharElement('[');
 					addCharElements(charset);
+					addCharElement(']');
 				}else{
 					state = STATE0;
 					addCharElement(c);

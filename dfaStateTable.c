@@ -30,7 +30,10 @@ int installState(int *nfaStates){
 	newEntry->nfaStates = copyIntArray(nfaStates);
 	newEntry->marked = 0;
 	newEntry->next = NULL;
-	pre->next = newEntry;
+	if(NULL == table)
+		table = newEntry;
+	else
+		pre->next = newEntry;
 	return stateNum;
 }
 
@@ -92,6 +95,7 @@ void destroyDFATable(){
 		temp = next;
 	}
 	table = NULL;
+	stateNum = 0;
 }
 
 

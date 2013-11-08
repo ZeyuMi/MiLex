@@ -15,7 +15,8 @@ void constructDFA(){
 	struct vertex *graph = getGraph();
 	int startPoint = graph->state;
 	int firstNFAState[2] = {startPoint, -1};
-	installState(firstNFAState);
+	int *nfaClosure = epsilonClosure(firstNFAState);
+	installState(nfaClosure);
 	while(unmarkedStatesExist()){
 		int state = getUnmarkedState();
 		markState(state);
@@ -25,12 +26,20 @@ void constructDFA(){
 		while('\0' != (c = charset[i++])){
 			int *reach = move(nfaStates, c);
 			int *closure = epsilonClosure(reach);
+			if(-1 == closure[0])
+				continue;
 			int dfaState = installState(closure);
 			addDFATransTableEntry(state, dfaState, c);
 		}
 	}
+}
+
+
+void destroyDFA(){
+	destroyDFATransTable();
 	destroyDFATable();
 }
+
 
 int *move(int *stateSet, char c){
 	int state = -1;
@@ -61,15 +70,15 @@ int *epsilonClosure(int *stateSet){
 	initializeIntBuffer();
 	while(-1 != (temp = *(stateSet++))){
 		addIntElement(temp);
-		push(temp);
+		pushStack(temp);
 	}
-	while(EMPTY != (temp = pop())){
+	while(EMPTY != (temp = popStack())){
 		int *reach = reachByEdgeSymbol(temp, EPSILON);
 		int tempState = -1;
 		while(-1 != (tempState = *(reach++))){
 			if(!isInIntBuffer(tempState)){
 				addIntElement(tempState);
-				push(tempState);
+				pushStack(tempState);
 			}
 		}
 	}

@@ -15,15 +15,11 @@ struct Funcentry *additionalfuncs = NULL;
 void testConstructNFA1();
 void testConstructNFA2();
 void testConstructNFA3();
-void testConstructNFA4();
-void testConstructNFA5();
 
 int main(){
 	testConstructNFA1();
 	testConstructNFA2();
 	testConstructNFA3();
-	testConstructNFA4();
-	testConstructNFA5();
 	return 0;
 }
 
@@ -65,13 +61,5 @@ void testConstructNFA3(){
 	constructNFA();
 	printGraph();
 	destroyNFA();
-}
-
-
-void testConstructNFA4(){
-}
-
-
-void testConstructNFA5(){
 }
 

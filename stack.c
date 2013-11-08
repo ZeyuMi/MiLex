@@ -47,6 +47,6 @@ void pushStack(int c){
 
 
 void clearStack(){
-	while(EMPTY != pop())
+	while(EMPTY != popStack())
 		;
 }

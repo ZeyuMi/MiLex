@@ -58,9 +58,9 @@ void addIntElement(int i){
 		intBuffer = malloc(sizeof(int) * intBuffersize);
 		if(intBuffer == NULL)
 			memError();
-		memcpy((void *)charBuffer, (void *)old, sizeof(int) * (charBuffersize/2));
+		memcpy((void *)intBuffer, (void *)old, sizeof(int) * (intBuffersize/2));
 		free(old);
-		intBufp = intBuffer + (charBuffersize/2);
+		intBufp = intBuffer + (intBuffersize/2);
 	}
 	*intBufp++ = i;
 }
