@@ -16,3 +16,8 @@
 *.out
 *.app
 lex
+MiLex
+
+
+#others
+output
