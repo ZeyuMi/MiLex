@@ -4,89 +4,177 @@
 
 #define DEFAULT 100 
 
-static int charBuffersize = 0;
-static int intBuffersize = 0;
+typedef struct intBufferEntry{
+	int id;
+	int *buffer;
+	int *bufp;
+	int buffersize;
+	struct intBufferEntry *next;
+} intEntry;
 
-static char *charBuffer = NULL;
-static char *charBufp = NULL;
+typedef struct charBufferEntry{
+	int id;
+	char *buffer;
+	int *bufp;
+	char buffersize;
+	struct charBufferEntry *next;
+} charEntry;
 
-static int *intBuffer = NULL;
-static int *intBufp = NULL;
+
+static charEntry *charBufferList = NULL;
+static intEntry *intBufferList = NULL;
+int charNum = 0;
+int intNum = 0;
 
 void memError();
+charEntry *findCharEntry(int);
+intEntry *findIntEntry(int);
 
-void initializeCharBuffer(){
-	charBuffersize = DEFAULT;
-	charBuffer = malloc(charBuffersize);
-	if(charBuffer == NULL)
+int initializeCharBuffer(){
+	charEntry *temp = charBufferList;
+	charEntry *pre = NULL;
+	while(NULL != temp){
+		pre = temp;
+		temp = temp->next;
+	}
+	temp = malloc(sizeof(charEntry));
+	if(NULL == temp)
 		memError();
-	charBufp = charBuffer;
+	temp->id = ++charNum;
+	temp->buffersize = DEFAULT;
+	temp->bufp = temp->buffer = malloc(DEFAULT);
+	if(NULL == temp->bufp)
+		memError();
+	temp->next = NULL;
+	if(NULL == table)
+		table = temp;
+	else
+		pre->next = temp;
+	return charNum;
 }
 
 void initializeIntBuffer(){
-	intBuffersize = DEFAULT;
-	intBuffer = malloc(sizeof(int) * intBuffersize);
-	if(intBuffer == NULL)
+	intEntry *temp = intBufferList;
+	intEntry *pre = NULL;
+	while(NULL != temp){
+		pre = temp;
+		temp = temp->next;
+	}
+	temp = malloc(sizeof(intEntry));
+	if(NULL == temp)
 		memError();
-	intBufp = intBuffer;
+	temp->id = ++intNum;
+	temp->buffersize = DEFAULT;
+	temp->bufp = temp->buffer = malloc(sizeof(int) * DEFAULT);
+	if(NULL == temp->bufp)
+		memError();
+	temp->next = NULL;
+	if(NULL == table)
+		table = temp;
+	else
+		pre->next = temp;
+	return intNum;
 }
 
-char *getCharBuffer(){
-	return charBuffer;
-}
 
-
-void addCharElement(char c){
-	if(charBufp - charBuffer >= charBuffersize){
-		charBuffersize *= 2;
-		char *old = charBuffer;
-		charBuffer = malloc(charBuffersize);
-		if(charBuffer == NULL)
-			memError();
-		memcpy((void *)charBuffer, (void *)old, charBuffersize/2);
-		free(old);
-		charBufp = charBuffer + (charBuffersize/2);
+char *getCharBuffer(int id){
+	charEntry *temp = charBufferList;
+	while(NULL != temp){
+		if(temp->id == id)
+			return temp->buffer;
+		temp = temp->next;
 	}
-	*charBufp++ = c;
+	return NULL;
 }
 
 
-void addIntElement(int i){
-	if(intBufp - intBuffer >= intBuffersize){
-		intBuffersize *= 2;
-		int *old = intBuffer;
-		intBuffer = malloc(sizeof(int) * intBuffersize);
-		if(intBuffer == NULL)
-			memError();
-		memcpy((void *)intBuffer, (void *)old, sizeof(int) * (intBuffersize/2));
-		free(old);
-		intBufp = intBuffer + (intBuffersize/2);
+charEntry *findCharEntry(int id){
+	charEntry *temp = charBufferList;
+	while(NULL != temp){
+		if(temp->id == id)
+			return temp;
+		temp = temp->next;
 	}
-	*intBufp++ = i;
+	return NULL;
 }
 
 
-void addCharElements(char *s){
+intEntry *findIntEntry(int id){
+	intEntry *temp = intBufferList;
+	while(NULL != temp){
+		if(temp->id == id)
+			return temp;
+		temp = temp->next;
+	}
+	return NULL;
+}
+
+
+void addCharElement(int id, char c){
+	charEntry *temp = findCharEntry(id); 
+	if(NULL == temp)
+		return;
+
+	if(temp->bufp - temp->buffer >= temp->buffersize){
+		temp->buffersize *= 2;
+		char *old = temp->buffer;
+		temp->buffer = malloc(temp->buffersize);
+		if(temp->buffer == NULL)
+			memError();
+		memcpy((void *)temp->buffer, (void *)old, (temp->buffersize)/2);
+		free(old);
+		temp->bufp = temp->buffer + ((temp->buffersize)/2);
+	}
+	*((temp->bufp)++) = c;
+}
+
+
+void addIntElement(int id, int i){
+	intEntry *temp = findIntEntry(id);
+	if(NULL == temp)
+		return;
+
+	if(temp->bufp - temp->buffer >= temp->buffersize){
+		temp->buffersize *= 2;
+		char *old = temp->buffer;
+		temp->buffer = malloc(sizeof(int) * temp->buffersize);
+		if(temp->buffer == NULL)
+			memError();
+		memcpy((void *)temp->buffer, (void *)old, sizeof(int) * (temp->buffersize)/2);
+		free(old);
+		temp->bufp = temp->buffer + ((temp->buffersize)/2);
+	}
+	*((temp->bufp)++) = i;
+}
+
+
+void addCharElements(int id, char *s){
 	while('\0' != *s){
-		addCharElement(*s);
+		addCharElement(id, *s);
 		s++;
 	}
 }
 
 
-void removeCharLast(){
-	if(charBufp == charBuffer)
+void removeCharLast(int id){
+	charEntry *temp = findCharEntry(id);
+	if(NULL == temp)
+		return;
+	if(temp->bufp == temp->buffer)
 		return;
 	else
-		charBufp--;
+		(temp->bufp)--;
 }
 
 
 void removeIntLast(){
-	if(intBufp == intBuffer)
+	intEntry *temp = findIntEntry(id);
+	if(NULL == temp)
+		return;
+	if(temp->bufp == temp->buffer)
 		return;
 	else
-		intBufp--;
+		(temp->bufp)--;
 }
 
 
