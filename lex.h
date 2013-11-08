@@ -19,6 +19,7 @@ extern char *declarations;
 extern struct Defentry *definitions;
 extern struct REentry *regexps;
 extern struct Funcentry *additionalfuncs;
+extern char *charset;
 
 #define CONSYMBOL -2
 #define NEWLINE -3

@@ -4,13 +4,32 @@
 #include "graph.h"
 #include "stack.h"
 #include "buffer.h"
+#include "dfaStateTable.h"
+#include "dfaTransTable.h"
 
 int *move(int *, char);
 int *epsilonClosure(int *);
 int *mergeIntArrays(int *, int *);
 
 void constructDFA(){
-
+	struct vertex *graph = getGraph();
+	int startPoint = graph->state;
+	int firstNFAState[2] = {startPoint, -1};
+	installState(firstNFAState);
+	while(unmarkedStatesExist()){
+		int state = getUnmarkedState();
+		markState(state);
+		int *nfaStates = getNFAStates(state);
+		char c = -1;
+		int i = 0;
+		while('\0' != (c = charset[i++])){
+			int *reach = move(nfaStates, c);
+			int *closure = epsilonClosure(reach);
+			int dfaState = installState(closure);
+			addDFATransTableEntry(state, dfaState, c);
+		}
+	}
+	destroyDFATable();
 }
 
 int *move(int *stateSet, char c){

@@ -132,7 +132,7 @@ char *fillCharClass(char *origin){
 					addCharElement(c);
 				}else if('.' == c){
 					state = STATE0;
-					addCharElements("[ !\\\"#$%&'\\(\\)\\*\\+,-./0123456789:;<=>\\?@ABCDEFGHIJKLMNOPQRSTUVWXYZ\\[\\\\\\]^_`abcdefghijklmnopqrstuvwxyz{\\|}~]");
+					addCharElements(charset);
 				}else{
 					state = STATE0;
 					addCharElement(c);

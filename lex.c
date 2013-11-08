@@ -13,6 +13,7 @@ struct Defentry *definitions = NULL;
 struct REentry *regexps = NULL;
 struct Funcentry *additionalfuncs = NULL;
 
+char *charset = "[ !\\\"#$%&'\\(\\)\\*\\+,-./0123456789:;<=>\\?@ABCDEFGHIJKLMNOPQRSTUVWXYZ\\[\\\\\\]^_`abcdefghijklmnopqrstuvwxyz{\\|}~]";
 
 void output();
 int main(int argc, char **argv){

@@ -161,6 +161,7 @@ int isConnectTo(int state1, int state2){
 	return 0;
 }
 
+
 struct vertex *getVertex(int state){
 	struct vertex *temp = graph;
 	while(NULL != temp){
@@ -169,4 +170,9 @@ struct vertex *getVertex(int state){
 		temp = temp->next;
 	}
 	return NULL;
+}
+
+
+struct vertex *getGraph(){
+	return graph;
 }
