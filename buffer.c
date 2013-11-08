@@ -211,8 +211,8 @@ void destroyCharBuffer(int id){
 		charEntry *pre = findPreCharEntry(id);
 		if(NULL == pre)
 			return;
-		pre->next = pre->next->next;
 		temp = pre->next;
+		pre->next = pre->next->next;
 	}
 	temp->id = 0;
 	temp->buffersize = 0;
@@ -231,8 +231,8 @@ void destroyIntBuffer(int id){
 		intEntry *pre = findPreIntEntry(id);
 		if(NULL == pre)
 			return;
-		pre->next = pre->next->next;
 		temp = pre->next;
+		pre->next = pre->next->next;
 	}
 	temp->id = 0;
 	temp->buffersize = 0;

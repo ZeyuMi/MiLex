@@ -32,37 +32,47 @@ void testConstructDFA1(){
 	constructNFA();
 	constructDFA();
 	printDFATransTable();
+	destroyNFA();
 	destroyDFA();
+	destroyGraph();
 }
 
 
 void testConstructDFA2(){
-	//regexps = malloc(sizeof(struct REentry));
-	//char *s = "(a|b)*abb(a|b)*";
-	//regexps->regexp = malloc(strlen(s));
-	//strcpy(regexps->regexp, s);
-	//regexps->action = "printf;";
-	//preprocess();
-	//constructNFA();
-	//printGraph();
-	//destroyNFA();
+	regexps = malloc(sizeof(struct REentry));
+	char *s = "(a|b)*abb(a|b)*";
+	regexps->regexp = malloc(strlen(s));
+	strcpy(regexps->regexp, s);
+	regexps->action = "printf;";
+	regexps->next = NULL;
+	preprocess();
+	constructNFA();
+	constructDFA();
+	printDFATransTable();
+	destroyDFA();
+	destroyNFA();
+	destroyGraph();
 }
 
 
 void testConstructDFA3(){
-	//regexps = malloc(sizeof(struct REentry));
-	//char *s = "(a|b)*abb(a|b)*";
-	//regexps->regexp = malloc(strlen(s));
-	//strcpy(regexps->regexp, s);
-	//regexps->action = "printf;";
-	//regexps->next = malloc(sizeof(struct REentry));
-	//s = "(a|b)+abc(a|b|c)?";
-	//regexps->next->regexp = malloc(strlen(s));
-	//strcpy(regexps->next->regexp, s);
-	//regexps->next->action = "donothing";
-	//preprocess();
-	//constructNFA();
-	//printGraph();
-	//destroyNFA();
+	regexps = malloc(sizeof(struct REentry));
+	char *s = "(a|b)*abb(a|b)*";
+	regexps->regexp = malloc(strlen(s));
+	strcpy(regexps->regexp, s);
+	regexps->action = "printf;";
+	regexps->next = malloc(sizeof(struct REentry));
+	s = "(a|b)+abc(a|b|c)?";
+	regexps->next->regexp = malloc(strlen(s));
+	strcpy(regexps->next->regexp, s);
+	regexps->next->action = "donothing";
+	regexps->next->next = NULL;
+	preprocess();
+	constructNFA();
+	constructDFA();
+	printDFATransTable();
+	destroyNFA();
+	destroyDFA();
+	destroyGraph();
 }
 

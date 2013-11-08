@@ -16,7 +16,8 @@ void constructDFA(){
 	int startPoint = graph->state;
 	int firstNFAState[2] = {startPoint, -1};
 	int *nfaClosure = epsilonClosure(firstNFAState);
-	installState(nfaClosure);
+	int dfaState = installState(nfaClosure);
+	addDFANewState(dfaState);
 	while(unmarkedStatesExist()){
 		int state = getUnmarkedState();
 		markState(state);
@@ -28,7 +29,8 @@ void constructDFA(){
 			int *closure = epsilonClosure(reach);
 			if(-1 == closure[0])
 				continue;
-			int dfaState = installState(closure);
+			dfaState = installState(closure);
+			addDFANewState(dfaState);
 			addDFATransTableEntry(state, dfaState, c);
 		}
 	}

@@ -9,28 +9,53 @@ typedef struct dfaTTEntry{
 }ttEntry;
 
 
-static ttEntry *table;
+static ttEntry *table = NULL;
 
-void addDFATransTableEntry(int from, int to, char symbol){
-	ttEntry *temp = table;
+ttEntry *getEntry(int);
+
+void addDFANewState(int state){
+	ttEntry *temp = getEntry(state);
+	if(NULL != temp)
+		return;
+	temp = table;
 	ttEntry *pre = NULL;
 	while(NULL != temp){
-		if(temp->state == from){
-			(temp->trans)[symbol] = to;
-			return;
-		}
 		pre = temp;
 		temp = temp->next;
 	}
 	temp = malloc(sizeof(ttEntry));
-	temp->state = from;
+	temp->state = state;
 	temp->trans = malloc(sizeof(int) * 128);
 	int i = 0;
-	while(i < 128)
+	while(i < 128){
 		(temp->trans)[i] = 0;
+		i++;
+	}
 	temp->next = NULL;
-	pre->next = temp;
-	*(temp->trans + symbol) = to;
+	if(NULL == table)
+		table = temp;
+	else
+		pre->next = temp;
+}
+
+
+void addDFATransTableEntry(int from, int to, char symbol){
+	ttEntry *temp = getEntry(from);
+	if(NULL == temp)
+		return;
+	(temp->trans)[symbol] = to;
+}
+
+
+ttEntry *getEntry(int state){
+	ttEntry *temp = table;
+	while(NULL != temp){
+		if(temp->state == state){
+			return temp;
+		}
+		temp = temp->next;
+	}
+	return NULL;
 }
 
 
@@ -45,7 +70,9 @@ void printDFATransTable(){
 			i++;
 		}
 		temp = temp->next;
+		printf("\n");
 	}
+	printf("\n");
 }
 
 

@@ -4,6 +4,7 @@
 #include "nfaConstructor.h"
 #include "stringUtil.h"
 #include "graph.h"
+#include "error.h"
 
 
 int constructFromRE(char *, char *);
