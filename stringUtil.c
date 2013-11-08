@@ -9,7 +9,7 @@
 int isOperator(char);
 int getPrecedence(char, int);
 char *infixToPostfix(char *origin){	
-	initializeCharBuffer();
+	int bufferid = initializeCharBuffer();
 	int pos = 0;
 	char c;
 	int doubleCharFlag = 0;
@@ -20,29 +20,29 @@ char *infixToPostfix(char *origin){
 			}else{
 				if(')' == c){
 					while('(' != topStack()){
-						addCharElement(popStack());
+						addCharElement(bufferid, popStack());
 					}
 					popStack();	// pop '('
 				}else{
 					while(EMPTY != topStack() && getPrecedence(topStack(), 1) >= getPrecedence(c, 0)){
-						addCharElement(popStack());
+						addCharElement(bufferid, popStack());
 					}
 					pushStack(c);
 				}
 			}
 		}else{
-			addCharElement(c);
+			addCharElement(bufferid, c);
 		}
 		pos++;
 	}
 	while(EMPTY != topStack()){
-		addCharElement(popStack());
+		addCharElement(bufferid, popStack());
 	}
-	addCharElement('\0');
-	char *s = getCharBuffer();
+	addCharElement(bufferid, '\0');
+	char *s = getCharBuffer(bufferid);
 	char *result = malloc(strlen(s) + 1);
 	strcpy(result, s);
-	destroyCharBuffer();
+	destroyCharBuffer(bufferid);
 	return result;
 }
 

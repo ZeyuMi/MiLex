@@ -54,7 +54,7 @@ void insertFuncEntry(char *);
 
 struct Defentry *defp = NULL;
 int readDeclareSec(){
-	initializeCharBuffer();
+	int bufferid = initializeCharBuffer();
 	int state = STATE0;
 	while(1){
 		int c = getch();
@@ -70,7 +70,7 @@ int readDeclareSec(){
 					state = STATE0;
 				}else{
 					state = STATE5;
-					addCharElement(c);
+					addCharElement(bufferid, c);
 				}
 				break;
 			case STATE1:
@@ -82,7 +82,7 @@ int readDeclareSec(){
 					error("lexReader readDeclareSec STATE1");
 				}else{
 					state = STATE5;
-					addCharElement(c);
+					addCharElement(bufferid, c);
 				}
 				break;
 			case STATE2:
@@ -111,14 +111,14 @@ int readDeclareSec(){
 			case STATE5:
 				if(' ' == c || '\t' == c){
 					state = STATE6;
-					addCharElement('\0');
-					insertDefEntry(getCharBuffer());
-					rewindCharPointer();
+					addCharElement(bufferid, '\0');
+					insertDefEntry(getCharBuffer(bufferid));
+					rewindCharPointer(bufferid);
 				}else if('\n' == c){
 					error("lexReader readDeclareSec STATE5");
 				}else{
 					state = STATE5;
-					addCharElement(c);
+					addCharElement(bufferid, c);
 				}
 				break;
 			case STATE6:
@@ -134,26 +134,26 @@ int readDeclareSec(){
 			case STATE7:
 				if(' ' == c || '\t' == c || '\n' == c){
 					state = STATE0;
-					addCharElement('\0');
-					insertDefContent(getCharBuffer());
-					rewindCharPointer();
+					addCharElement(bufferid, '\0');
+					insertDefContent(getCharBuffer(bufferid));
+					rewindCharPointer(bufferid);
 				}else if('\"' == c || '[' == c){
 					state = STATE8;
-					addCharElement(c);
+					addCharElement(bufferid, c);
 				}else{
 					state = STATE7;
-					addCharElement(c);
+					addCharElement(bufferid, c);
 				}
 				break;
 			case STATE8:
 				if('\"' == c || ']' == c){
 					state = STATE7;
-					addCharElement(c);
+					addCharElement(bufferid, c);
 				}else if('\n' == c || '\t' == c){
 					error("lexReader readDeclareSec STATE8");
 				}else{
 					state = STATE8;
-					addCharElement(c);
+					addCharElement(bufferid, c);
 				}
 				break;
 			case STATE9:
@@ -161,7 +161,7 @@ int readDeclareSec(){
 					state = STATE10;
 				}else if('%' == c){
 					state = STATE0;
-					destroyCharBuffer();
+					destroyCharBuffer(bufferid);
 					return 1;
 				}else{
 					error("lexReader readDeclareSec STATE9");
@@ -172,15 +172,15 @@ int readDeclareSec(){
 					state = STATE11;
 				}else{
 					state = STATE10;
-					addCharElement(c);
+					addCharElement(bufferid, c);
 				}
 				break;
 			case STATE11:
 				if('}' == c){
 					state = STATE0;
-				    declarations = malloc(charSize());
-					strcpy(declarations, getCharBuffer());
-					rewindCharPointer();
+				    declarations = malloc(charSize(bufferid));
+					strcpy(declarations, getCharBuffer(bufferid));
+					rewindCharPointer(bufferid);
 				}else{
 					error("lexReader readDeclareSec STATE11");
 				}
@@ -193,7 +193,7 @@ int readDeclareSec(){
 
 struct REentry *rep = NULL;
 int readRESec(){
-	initializeCharBuffer();
+	int bufferid = initializeCharBuffer();
 	int state = STATE0;
 	while(1){
 		char c = getch();
@@ -250,28 +250,28 @@ int readRESec(){
 			case STATE5:
 				if(' ' == c || '\t' == c){
 					state = STATE7;
-					addCharElement('\0');
-					insertREEntry(getCharBuffer());
-					rewindCharPointer();
+					addCharElement(bufferid, '\0');
+					insertREEntry(getCharBuffer(bufferid));
+					rewindCharPointer(bufferid);
 				}else if('\n' == c){
 					error("lexReader readRESec STATE5");
 				}else if('\"' == c || '[' == c){
 					state = STATE6;
-					addCharElement(c);
+					addCharElement(bufferid,c);
 				}else{
 					state = STATE5;
-					addCharElement(c);
+					addCharElement(bufferid,c);
 				}
 				break;
 			case STATE6:
 				if('\"' == c || ']' == c){
 					state = STATE5;
-					addCharElement(c);
+					addCharElement(bufferid,c);
 				}else if('\n' == c || '\t' == c){
 					error("lexReader readRESec STATE6");
 				}else{
 					state = STATE6;
-					addCharElement(c);
+					addCharElement(bufferid,c);
 				}
 				break;
 			case STATE7:
@@ -286,18 +286,18 @@ int readRESec(){
 			case STATE8:
 				if('}' == c){
 					state = STATE0;
-					addCharElement('\0');
-					insertREAction(getCharBuffer());
-					rewindCharPointer();
+					addCharElement(bufferid, '\0');
+					insertREAction(getCharBuffer(bufferid));
+					rewindCharPointer(bufferid);
 				}else{
 					state = STATE8;
-					addCharElement(c);
+					addCharElement(bufferid,c);
 				}
 				break;
 			case STATE9:
 				if('%' == c){
 					state = STATE0;
-					destroyCharBuffer();
+					destroyCharBuffer(bufferid);
 					return 1;
 				}
 				break;
@@ -310,7 +310,7 @@ int readRESec(){
 struct Funcentry *funcp = NULL;
 int readFuncSec(){
 	int leftBraceNum = 0;
-	initializeCharBuffer();
+	int bufferid = initializeCharBuffer();
 	int state = STATE0;
 	while(1){
 		char c = getch();
@@ -318,7 +318,7 @@ int readFuncSec(){
 			if(state != STATE0)
 				return ERROR;
 			else{
-				destroyCharBuffer();
+				destroyCharBuffer(bufferid);
 				return 1;
 			}
 		}
@@ -329,7 +329,7 @@ int readFuncSec(){
 				}else if(isalpha(c) || '_' == c){
 					state = STATE5;
 					leftBraceNum = 0;
-					addCharElement(c);
+					addCharElement(bufferid,c);
 				}else if('\t' == c || ' ' == c || '\n' == c){
 					state = STATE0;
 				}else{
@@ -371,32 +371,32 @@ int readFuncSec(){
 			case STATE5:
 				if('\"' == c){
 					state = STATE6;
-					addCharElement(c);
+					addCharElement(bufferid,c);
 				}else if('{' == c){
 					state = STATE5;
 					leftBraceNum++;
-					addCharElement(c);
+					addCharElement(bufferid,c);
 				}else if('/' == c){
 					state = STATE7;
-					addCharElement(c);
+					addCharElement(bufferid,c);
 				}else if(c == '}'){
 					leftBraceNum--;
-					addCharElement(c);
+					addCharElement(bufferid,c);
 					if(0 == leftBraceNum){
 						state = STATE0;
-						addCharElement('\0');
-						insertFuncEntry(getCharBuffer());
-						rewindCharPointer();
+						addCharElement(bufferid, '\0');
+						insertFuncEntry(getCharBuffer(bufferid));
+						rewindCharPointer(bufferid);
 					}else{
 						state = STATE5;
 					}
 				}else{
 					state = STATE5;
-					addCharElement(c);
+					addCharElement(bufferid,c);
 				}
 				break;
 			case STATE6:
-				addCharElement(c);
+				addCharElement(bufferid,c);
 				if('\"' == c){
 					state = STATE5;
 				}else if('\n' == c){
@@ -406,7 +406,7 @@ int readFuncSec(){
 				}
 				break;
 			case STATE7:
-				addCharElement(c);
+				addCharElement(bufferid,c);
 				if('*' == c){
 					state = STATE8;
 				}else if('/' == c){
@@ -416,7 +416,7 @@ int readFuncSec(){
 				}
 				break;
 			case STATE8:
-				addCharElement(c);
+				addCharElement(bufferid,c);
 				if('*' == c){
 					state = STATE9;
 				}else{
@@ -424,7 +424,7 @@ int readFuncSec(){
 				}
 				break;
 			case STATE9:
-				addCharElement(c);
+				addCharElement(bufferid,c);
 				if('*' == c){
 					state = STATE9;
 				}else if('/' == c){
@@ -434,7 +434,7 @@ int readFuncSec(){
 				}
 				break;
 			case STATE10:
-				addCharElement(c);
+				addCharElement(bufferid,c);
 				if('\n' == c){
 					state = STATE5;
 				}else{

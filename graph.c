@@ -69,18 +69,18 @@ void destroyGraph(){
 int *reachByEdgeSymbol(int state, char symbol){
 	if(!isVertexExist(state))
 		return NULL;
-	initializeIntBuffer();
+	int bufferid = initializeIntBuffer();
 	struct vertex *vertexTemp = getVertex(state);
 	struct edge *edgeTemp = vertexTemp->edges;
 	while(NULL != edgeTemp){
 		if(symbol == edgeTemp->symbol)
-			addIntElement(edgeTemp->connectsTo->state);
+			addIntElement(bufferid, edgeTemp->connectsTo->state);
 		edgeTemp = edgeTemp->next;
 	}
-	addIntElement(-1);
-	int *result = malloc(intSize() * sizeof(int));
-	fillIntArrayWithBuffer(result);
-	destroyIntBuffer();
+	addIntElement(bufferid, -1);
+	int *result = malloc(intSize(bufferid) * sizeof(int));
+	fillIntArrayWithBuffer(bufferid, result);
+	destroyIntBuffer(bufferid);
 	return result;
 }
 

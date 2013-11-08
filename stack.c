@@ -35,7 +35,7 @@ void pushStack(int c){
 		size = DEFAULT;
 		topp = stack = malloc(size * sizeof(int));
 	}else if(topp - stack >= size){
-		char *old = stack;
+		int *old = stack;
 		size *= 2;
 		stack = malloc(size * sizeof(int));
 		memcpy(stack, old, sizeof(int) * (size/2));

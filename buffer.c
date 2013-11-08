@@ -15,7 +15,7 @@ typedef struct intBufferEntry{
 typedef struct charBufferEntry{
 	int id;
 	char *buffer;
-	int *bufp;
+	char *bufp;
 	char buffersize;
 	struct charBufferEntry *next;
 } charEntry;
@@ -30,7 +30,7 @@ void memError();
 charEntry *findCharEntry(int);
 intEntry *findIntEntry(int);
 charEntry *findPreCharEntry(int);
-IntEntry *findPreIntEntry(int);
+intEntry *findPreIntEntry(int);
 
 int initializeCharBuffer(){
 	charEntry *temp = charBufferList;
@@ -48,14 +48,14 @@ int initializeCharBuffer(){
 	if(NULL == temp->bufp)
 		memError();
 	temp->next = NULL;
-	if(NULL == table)
-		table = temp;
+	if(NULL == charBufferList)
+		charBufferList = temp;
 	else
 		pre->next = temp;
 	return charNum;
 }
 
-void initializeIntBuffer(){
+int initializeIntBuffer(){
 	intEntry *temp = intBufferList;
 	intEntry *pre = NULL;
 	while(NULL != temp){
@@ -71,8 +71,8 @@ void initializeIntBuffer(){
 	if(NULL == temp->bufp)
 		memError();
 	temp->next = NULL;
-	if(NULL == table)
-		table = temp;
+	if(NULL == intBufferList)
+		intBufferList = temp;
 	else
 		pre->next = temp;
 	return intNum;
@@ -103,8 +103,8 @@ charEntry *findCharEntry(int id){
 
 charEntry *findPreCharEntry(int id){
 	charEntry *temp = charBufferList;
-	while(NULL != temp){
-		if(temp->id == id)
+	while(NULL != temp && NULL != temp->next){
+		if(temp->next->id == id)
 			return temp;
 		temp = temp->next;
 	}
@@ -125,8 +125,8 @@ intEntry *findIntEntry(int id){
 
 intEntry *findPreIntEntry(int id){
 	intEntry *temp = intBufferList;
-	while(NULL != temp){
-		if(temp->id == id)
+	while(NULL != temp && NULL != temp->next){
+		if(temp->next->id == id)
 			return temp;
 		temp = temp->next;
 	}
@@ -160,7 +160,7 @@ void addIntElement(int id, int i){
 
 	if(temp->bufp - temp->buffer >= temp->buffersize){
 		temp->buffersize *= 2;
-		char *old = temp->buffer;
+		int *old = temp->buffer;
 		temp->buffer = malloc(sizeof(int) * temp->buffersize);
 		if(temp->buffer == NULL)
 			memError();
@@ -203,58 +203,99 @@ void removeIntLast(int id){
 
 
 void destroyCharBuffer(int id){
-	charEntry *pre = NULL;
+	charEntry *temp = NULL;
+	if(charBufferList->id == id){
+		temp = charBufferList;
+		charBufferList = charBufferList->next;
+	}else{
+		charEntry *pre = findPreCharEntry(id);
+		if(NULL == pre)
+			return;
+		pre->next = pre->next->next;
+		temp = pre->next;
+	}
+	temp->id = 0;
+	temp->buffersize = 0;
+	free(temp->buffer);
+	temp->bufp = temp->buffer = 0;
+	temp->next = NULL;
+}
+
+
+void destroyIntBuffer(int id){
+	intEntry *temp = NULL;
+	if(intBufferList->id == id){
+		temp = intBufferList;
+		intBufferList = intBufferList->next;
+	}else{
+		intEntry *pre = findPreIntEntry(id);
+		if(NULL == pre)
+			return;
+		pre->next = pre->next->next;
+		temp = pre->next;
+	}
+	temp->id = 0;
+	temp->buffersize = 0;
+	free(temp->buffer);
+	temp->bufp = temp->buffer = 0;
+	temp->next = NULL;
+}
+
+
+void rewindCharPointer(int id){
 	charEntry *temp = findCharEntry(id);
-	charBuffersize = 0;
-	free(charBuffer);
-	charBuffer = charBufp = NULL;
+	if(NULL == temp)
+		return;
+	temp->bufp = temp->buffer;
 }
 
 
-void destroyIntBuffer(){
+void rewindIntPointer(int id){
 	intEntry *temp = findIntEntry(id);
-	intBuffersize = 0;
-	free(intBuffer);
-	intBuffer = intBufp = NULL;
+	if(NULL == temp)
+		return;
+	temp->bufp = temp->buffer;
 }
 
 
-void rewindCharPointer(){
-	charBufp = charBuffer;
+int charSize(int id){
+	charEntry *temp = findCharEntry(id);
+	if(NULL == temp)
+		return 0;
+	return temp->bufp - temp->buffer;
 }
 
 
-void rewindIntPointer(){
-	intBufp = intBuffer;
+int intSize(int id){
+	intEntry *temp = findIntEntry(id);
+	if(NULL == temp)
+		return 0;
+	return temp->bufp - temp->buffer;
 }
 
 
-int charSize(){
-	return charBufp - charBuffer;
-}
-
-
-int intSize(){
-	return intBufp - intBuffer;
-}
-
-
-void fillIntArrayWithBuffer(int *array){
-	int size = intSize();
+void fillIntArrayWithBuffer(int id, int *array){
+	intEntry *temp = findIntEntry(id);
+	if(NULL == temp)
+		return;
+	int size = intSize(id);
 	int i = 0;
 	while(i < size){
-		*(array+i) = *(intBuffer+i);
+		*(array+i) = *((temp->buffer)+i);
 		i++;
 	}
 }
 
 
-int isInIntBuffer(int i){
-	int *temp = intBuffer;
-	while(temp != intBufp){
-		if(*temp == i)
+int isInIntBuffer(int id, int i){
+	intEntry *temp = findIntEntry(id);
+	if(NULL == temp)
+		return 0;
+	int *tempBufp = temp->buffer;
+	while(tempBufp != temp->bufp){
+		if(*tempBufp == i)
 			return 1;
-		temp++;
+		tempBufp++;
 	}
 	return 0;
 }

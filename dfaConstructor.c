@@ -67,25 +67,25 @@ int *move(int *stateSet, char c){
 int *epsilonClosure(int *stateSet){
 	clearStack();
 	int temp = -1;
-	initializeIntBuffer();
+	int bufferid = initializeIntBuffer();
 	while(-1 != (temp = *(stateSet++))){
-		addIntElement(temp);
+		addIntElement(bufferid, temp);
 		pushStack(temp);
 	}
 	while(EMPTY != (temp = popStack())){
 		int *reach = reachByEdgeSymbol(temp, EPSILON);
 		int tempState = -1;
 		while(-1 != (tempState = *(reach++))){
-			if(!isInIntBuffer(tempState)){
-				addIntElement(tempState);
+			if(!isInIntBuffer(bufferid, tempState)){
+				addIntElement(bufferid, tempState);
 				pushStack(tempState);
 			}
 		}
 	}
-	addIntElement(-1);
-	int *result = malloc(intSize() * sizeof(int));
-	fillIntArrayWithBuffer(result);
-	destroyIntBuffer();
+	addIntElement(bufferid, -1);
+	int *result = malloc(intSize(bufferid) * sizeof(int));
+	fillIntArrayWithBuffer(bufferid, result);
+	destroyIntBuffer(bufferid);
 	return result;
 }
 
