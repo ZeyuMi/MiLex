@@ -29,6 +29,8 @@ int intNum = 0;
 void memError();
 charEntry *findCharEntry(int);
 intEntry *findIntEntry(int);
+charEntry *findPreCharEntry(int);
+IntEntry *findPreIntEntry(int);
 
 int initializeCharBuffer(){
 	charEntry *temp = charBufferList;
@@ -99,7 +101,29 @@ charEntry *findCharEntry(int id){
 }
 
 
+charEntry *findPreCharEntry(int id){
+	charEntry *temp = charBufferList;
+	while(NULL != temp){
+		if(temp->id == id)
+			return temp;
+		temp = temp->next;
+	}
+	return NULL;
+}
+
+
 intEntry *findIntEntry(int id){
+	intEntry *temp = intBufferList;
+	while(NULL != temp){
+		if(temp->id == id)
+			return temp;
+		temp = temp->next;
+	}
+	return NULL;
+}
+
+
+intEntry *findPreIntEntry(int id){
 	intEntry *temp = intBufferList;
 	while(NULL != temp){
 		if(temp->id == id)
@@ -167,7 +191,7 @@ void removeCharLast(int id){
 }
 
 
-void removeIntLast(){
+void removeIntLast(int id){
 	intEntry *temp = findIntEntry(id);
 	if(NULL == temp)
 		return;
@@ -178,7 +202,9 @@ void removeIntLast(){
 }
 
 
-void destroyCharBuffer(){
+void destroyCharBuffer(int id){
+	charEntry *pre = NULL;
+	charEntry *temp = findCharEntry(id);
 	charBuffersize = 0;
 	free(charBuffer);
 	charBuffer = charBufp = NULL;
@@ -186,6 +212,7 @@ void destroyCharBuffer(){
 
 
 void destroyIntBuffer(){
+	intEntry *temp = findIntEntry(id);
 	intBuffersize = 0;
 	free(intBuffer);
 	intBuffer = intBufp = NULL;
