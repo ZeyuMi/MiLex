@@ -21,3 +21,4 @@ MiLex
 
 #others
 output
+lex.yy.c

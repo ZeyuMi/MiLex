@@ -66,6 +66,11 @@ void generateProgram(char *filename){
 	fprintf(file, "\n");
 	fprintf(file, "}");
 	fprintf(file, "\n");
+	fprintf(file, "\n");
+	fprintf(file, "void error(){");
+	fprintf(file, "\tprintf(\"error!\\n\");");
+	fprintf(file, "}");
+	fprintf(file, "\n");
 
 	struct Funcentry *funcTemp = additionalfuncs;
 	while(NULL != funcTemp){
@@ -98,22 +103,66 @@ void generateProgram(char *filename){
 	
 	struct dfaTTEntry *entryTemp = getTable();
 	while(NULL != entryTemp){
+		i = 0;
 		fprintf(file, "\t\t\tcase STATE%d:", entryTemp->state);
 		fprintf(file, "\n");
+		int hasIf = 0;
 		while(i < 128){
 			if(0 != (entryTemp->trans)[i]){
-				fprintf(file, "\t\t\t\tif(%c == c){", i);
+				hasIf = 1;
+				fprintf(file, "\t\t\t\tif(\'%c\' == c){", i);
 				fprintf(file, "\n");
-				
+				fprintf(file, "\t\t\t\t\tstate = STATE%d;", (entryTemp->trans)[i]);
+				fprintf(file, "\n");
+				fprintf(file, "\t\t\t\t\t*p++ = c;");
+				fprintf(file, "\n");
 				fprintf(file, "\t\t\t\t}");
-				fprintf(file, "\n");
+				i++;
+				break;
 			}
 			i++;
+		}
+		while(i < 128){
+			if(0 != (entryTemp->trans)[i]){
+				fprintf(file, "else if(\'%c\' == c){", i);
+				fprintf(file, "\n");
+				fprintf(file, "\t\t\t\t\tstate = STATE%d;", (entryTemp->trans)[i]);
+				fprintf(file, "\n");
+				fprintf(file, "\t\t\t\t\t*p++ = c;");
+				fprintf(file, "\n");
+				fprintf(file, "\t\t\t\t}");
+			}
+			i++;
+		}
+		if(hasIf){
+			fprintf(file, "else{");
+			fprintf(file, "\n");
+			if(NULL != entryTemp->action){
+				fprintf(file, "\t\t\t\t\t%s", entryTemp->action);
+			}else{
+				fprintf(file, "\t\t\t\t\terror();");
+			}
+			fprintf(file, "\n");
+			fprintf(file, "\t\t\t\t}");
+			fprintf(file, "\n");
+		}else{
+			if(NULL != entryTemp->action){
+				fprintf(file, "\t\t\t\t\t%s", entryTemp->action);
+			}else{
+				fprintf(file, "\t\t\t\t\terror();");
+			}
+			fprintf(file, "\n");
 		}
 		fprintf(file, "\t\t\t\tbreak;");
 		fprintf(file, "\n");
 		entryTemp = entryTemp->next;
 	}
+	fprintf(file, "\t\t\tdefault:");
+	fprintf(file, "\n");
+	fprintf(file, "\t\t\t\terror();");
+	fprintf(file, "\n");
+	fprintf(file, "\t\t\t\tbreak;");
+	fprintf(file, "\n");
 
 	fprintf(file, "\t\t}");
 	fprintf(file, "\n");
