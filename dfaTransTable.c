@@ -2,29 +2,21 @@
 #include <stdio.h>
 #include "dfaTransTable.h"
 
-typedef struct dfaTTEntry{
-	int state;
-	int *trans;
-	char *action;
-	struct dfaTTEntry *next;
-}ttEntry;
+static struct dfaTTEntry *table = NULL;
 
-
-static ttEntry *table = NULL;
-
-ttEntry *getEntry(int);
+struct dfaTTEntry *getEntry(int);
 
 void addDFANewState(int state, char *action){
-	ttEntry *temp = getEntry(state);
+	struct dfaTTEntry *temp = getEntry(state);
 	if(NULL != temp)
 		return;
 	temp = table;
-	ttEntry *pre = NULL;
+	struct dfaTTEntry *pre = NULL;
 	while(NULL != temp){
 		pre = temp;
 		temp = temp->next;
 	}
-	temp = malloc(sizeof(ttEntry));
+	temp = malloc(sizeof(struct dfaTTEntry));
 	temp->state = state;
 	temp->trans = malloc(sizeof(int) * 128);
 	temp->action = action;
@@ -42,15 +34,15 @@ void addDFANewState(int state, char *action){
 
 
 void addDFATransTableEntry(int from, int to, char symbol){
-	ttEntry *temp = getEntry(from);
+	struct dfaTTEntry *temp = getEntry(from);
 	if(NULL == temp)
 		return;
 	(temp->trans)[symbol] = to;
 }
 
 
-ttEntry *getEntry(int state){
-	ttEntry *temp = table;
+struct dfaTTEntry *getEntry(int state){
+	struct dfaTTEntry *temp = table;
 	while(NULL != temp){
 		if(temp->state == state){
 			return temp;
@@ -62,7 +54,7 @@ ttEntry *getEntry(int state){
 
 
 void printDFATransTable(){
-	ttEntry *temp = table;
+	struct dfaTTEntry *temp = table;
 	while(NULL != temp){
 		printf("state%d: ", temp->state);
 		int i = 0;
@@ -81,8 +73,8 @@ void printDFATransTable(){
 
 
 void destroyDFATransTable(){
-	ttEntry *temp = table;
-	ttEntry *next = NULL;
+	struct dfaTTEntry *temp = table;
+	struct dfaTTEntry *next = NULL;
 	while(NULL != temp){
 		next = temp->next;
 		temp->state = 0;
@@ -93,4 +85,20 @@ void destroyDFATransTable(){
 		temp = next;
 	}
 	table = NULL;
+}
+
+
+struct dfaTTEntry *getTable(){
+	return table;
+}
+
+
+int getTableEntryNum(){
+	struct dfaTTEntry *temp = table;
+	int num = 0;
+	while(NULL != temp){
+		num++;
+		temp = temp->next;
+	}
+	return num;
 }

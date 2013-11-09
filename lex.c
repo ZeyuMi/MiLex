@@ -15,6 +15,8 @@ struct Funcentry *additionalfuncs = NULL;
 
 char *charset = " !\\\"#$%&'\\(\\)\\*\\+,-./0123456789:;<=>\\?@ABCDEFGHIJKLMNOPQRSTUVWXYZ\\[\\\\\\]^_`abcdefghijklmnopqrstuvwxyz{\\|}~";
 
+char *program = NULL;
+
 void output();
 int main(int argc, char **argv){
 	if(1 == argc){
@@ -38,7 +40,6 @@ int main(int argc, char **argv){
 		optimizeDFA();
 		generateProgram();
 		writeProgram("lex.yy.c");
-//		output();
 		return 0;
 	}
 }
