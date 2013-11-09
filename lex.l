@@ -11,8 +11,6 @@ id		{letter}({letter}|{digit})*
 number	{digit}+(\.{digit}+)?(E[+-]?{digit}+)?
 
 %%
-[.\r]       {nothing}
-.+          {testing}
 {ws}		{/* no action and no return*/}
 if			{return IF;} 
 then		{return THEN;}

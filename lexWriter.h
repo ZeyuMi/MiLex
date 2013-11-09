@@ -1,1 +1,0 @@
-void writeProgram(char *filename);

@@ -1,79 +1,79 @@
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "lex.h"
 #include "programGenerator.h"
 #include "dfaTransTable.h"
-#include "buffer.h"
 
-void generateProgram(){
-	int bufferid = initializeCharBuffer();
-	addCharElements(bufferid, "#include <stdio.h>");
-	addCharElement(bufferid, '\n');
-	addCharElements(bufferid, declarations);
-	addCharElement(bufferid, '\n');
-	addCharElements(bufferid, "#define YYLMAX 200");
-	addCharElement(bufferid, '\n');
-	addCharElements(bufferid, "#define BUFSIZE 100");
-	addCharElement(bufferid, '\n');
-	addCharElements(bufferid, "enum states {");
-	addCharElement(bufferid, '\n');
+void generateProgram(char *filename){
+	FILE *file = fopen(filename, "w");
+
+	fprintf(file, "#include <stdio.h>");
+	fprintf(file, "\n");
+	fprintf(file, "%s", declarations);
+	fprintf(file, "\n");
+	fprintf(file, "#define YYLMAX 200");
+	fprintf(file, "\n");
+	fprintf(file, "#define BUFSIZE 100");
+	fprintf(file, "\n");
+	fprintf(file, "enum states {");
+	fprintf(file, "\n");
 	
 	int stateNum = getTableEntryNum();
 	int i = 0;
 	while(i <= stateNum){
-		addCharElements(bufferid, "\t\tSTATE");
-		addCharElement(bufferid, '0'+i);
-		addCharElement(bufferid, ',');
-		addCharElement(bufferid, '\n');
+		fprintf(file, "\t\tSTATE");
+		fprintf(file, "%d", i);
+		fprintf(file, ",");
+		fprintf(file, "\n");
+		i++;
 	}
-	addCharElements(bufferid, "\t\t};");
-	addCharElement(bufferid, '\n');
-	addCharElements(bufferid, "int state = STATE0;");
-	addCharElement(bufferid, '\n');
+	fprintf(file, "\t\t};");
+	fprintf(file, "\n");
+	fprintf(file, "int state = STATE0;");
+	fprintf(file, "\n");
 
-	addCharElements(bufferid, "FILE *yyin = stdin;");
-	addCharElement(bufferid, '\n');
-	addCharElements(bufferid, "FILE *yyout = stdout;");
-	addCharElement(bufferid, '\n');
-	addCharElements(bufferid, "char yytext[YYLMAX];");
-	addCharElement(bufferid, '\n');
-	addCharElements(bufferid, "int yyleng = 0;");
-	addCharElement(bufferid, '\n');
+	fprintf(file, "FILE *yyin = stdin;");
+	fprintf(file, "\n");
+	fprintf(file, "FILE *yyout = stdout;");
+	fprintf(file, "\n");
+	fprintf(file, "char yytext[YYLMAX];");
+	fprintf(file, "\n");
+	fprintf(file, "int yyleng = 0;");
+	fprintf(file, "\n");
 
-	addCharElement(bufferid, '\n');
-	addCharElements(bufferid, "char buf[BUFSIZE];");
-	addCharElement(bufferid, '\n');
-	addCharElements(bufferid, "int bufp = 0");
-	addCharElement(bufferid, '\n');
-	addCharElements(bufferid, "char input(){");
-	addCharElement(bufferid, '\n');
-	addCharElements(bufferid, "\treturn (bufp > 0) ? buf[bufp--] : getc(yyin);");
-	addCharElement(bufferid, '\n');
-	addCharElement(bufferid, '}');
-	addCharElement(bufferid, '\n');
-	addCharElements(bufferid, "void unput(int c){");
-	addCharElement(bufferid, '\n');
-	addCharElements(bufferid, "\tif(bufp >= BUFSIZE-1)");
-	addCharElement(bufferid, '\n');
-	addCharElements(bufferid, "\t\tfprintf(stderr, \"ERROR: BUFFER is full\\n\");");
-	addCharElement(bufferid, '\n');
-	addCharElements(bufferid, "\telse");
-	addCharElement(bufferid, '\n');
-	addCharElements(bufferid, "\t\tbuf[++bufp] = c;");
-	addCharElement(bufferid, '\n');
-	addCharElement(bufferid, '}');
-	addCharElement(bufferid, '\n');
+	fprintf(file, "\n");
+	fprintf(file, "char buf[BUFSIZE];");
+	fprintf(file, "\n");
+	fprintf(file, "int bufp = 0");
+	fprintf(file, "\n");
+	fprintf(file, "char input(){");
+	fprintf(file, "\n");
+	fprintf(file, "\treturn (bufp > 0) ? buf[bufp--] : getc(yyin);");
+	fprintf(file, "\n");
+	fprintf(file, "\n");
+	fprintf(file, "}");
+	fprintf(file, "\n");
+	fprintf(file, "\n");
+	fprintf(file, "void unput(int c){");
+	fprintf(file, "\n");
+	fprintf(file, "\tif(bufp >= BUFSIZE-1)");
+	fprintf(file, "\n");
+	fprintf(file, "\t\tfprintf(stderr, \"ERROR: BUFFER is full\\n\");");
+	fprintf(file, "\n");
+	fprintf(file, "\telse");
+	fprintf(file, "\n");
+	fprintf(file, "\t\tbuf[++bufp] = c;");
+	fprintf(file, "\n");
+	fprintf(file, "}");
+	fprintf(file, "\n");
 
 
 
 
 
-	addCharElements(bufferid, "int yylex(){\n");
+	fprintf(file, "int yylex(){\n");
 	
-	addCharElements(bufferid, "}\n");
-
-	addCharElement(bufferid, '\0');
-	program = malloc(charSize(bufferid));
-	strcpy(program, getCharBuffer(bufferid));
-	destroyCharBuffer(bufferid);
+	fprintf(file, "}\n");
+	fclose(file);
 }

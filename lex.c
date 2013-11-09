@@ -6,7 +6,6 @@
 #include "dfaConstructor.h"
 #include "dfaOptimizer.h"
 #include "programGenerator.h"
-#include "lexWriter.h"
 
 char *declarations = NULL;
 struct Defentry *definitions = NULL;
@@ -38,8 +37,7 @@ int main(int argc, char **argv){
 		constructNFA();
 		constructDFA();
 		optimizeDFA();
-		generateProgram();
-		writeProgram("lex.yy.c");
+		generateProgram("lex.yy.c");
 		return 0;
 	}
 }

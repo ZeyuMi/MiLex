@@ -16,7 +16,7 @@ typedef struct charBufferEntry{
 	int id;
 	char *buffer;
 	char *bufp;
-	char buffersize;
+	int buffersize;
 	struct charBufferEntry *next;
 } charEntry;
 
@@ -303,5 +303,4 @@ int isInIntBuffer(int id, int i){
 
 void memError(){
 	fprintf(stderr, "memory error!\n");
-	exit(EXIT_FAILURE);
 }
