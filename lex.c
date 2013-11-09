@@ -6,6 +6,7 @@
 #include "dfaConstructor.h"
 #include "dfaOptimizer.h"
 #include "programGenerator.h"
+#include "dfaTransTable.h"
 
 char *declarations = NULL;
 struct Defentry *definitions = NULL;
@@ -36,6 +37,7 @@ int main(int argc, char **argv){
 		output();
 		constructNFA();
 		constructDFA();
+		printDFATransTable();
 		optimizeDFA();
 		generateProgram("lex.yy.c");
 		return 0;

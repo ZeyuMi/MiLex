@@ -23,17 +23,19 @@ void constructDFA(){
 		int state = getUnmarkedState();
 		markState(state);
 		int *nfaStates = getNFAStates(state);
-		char c = -1;
 		int i = 0;
-		while('\0' != (c = charset[i++])){
-			int *reach = move(nfaStates, c);
+		while(i < 128){
+			int *reach = move(nfaStates, i);
 			int *closure = epsilonClosure(reach);
-			if(-1 == closure[0])
+			if(-1 == closure[0]){
+				i++;
 				continue;
+			}
 			dfaState = installState(closure);
 			char *action = getAction(closure);
 			addDFANewState(dfaState, action);
-			addDFATransTableEntry(state, dfaState, c);
+			addDFATransTableEntry(state, dfaState, i);
+			i++;
 		}
 	}
 }

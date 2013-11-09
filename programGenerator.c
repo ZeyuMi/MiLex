@@ -110,11 +110,11 @@ void generateProgram(char *filename){
 		while(i < 128){
 			if(0 != (entryTemp->trans)[i]){
 				hasIf = 1;
-				if(2 == i){
+				if(NEWLINE == i){
 					fprintf(file, "\t\t\t\tif(\'\\n\' == c){");
-				}else if(3 == i){
+				}else if(TAB == i){
 					fprintf(file, "\t\t\t\tif(\'\\t\' == c){");
-				}else if(4 == i){
+				}else if(RETURN == i){
 					fprintf(file, "\t\t\t\tif(\'\\r\' == c){");
 				}else{
 					fprintf(file, "\t\t\t\tif(\'%c\' == c){", i);
@@ -132,11 +132,11 @@ void generateProgram(char *filename){
 		}
 		while(i < 128){
 			if(0 != (entryTemp->trans)[i]){
-				if(2 == i){
+				if(NEWLINE == i){
 					fprintf(file, "else if(\'\\n\' == c){");
-				}else if(3 == i){
+				}else if(TAB == i){
 					fprintf(file, "else if(\'\\t\' == c){");
-				}else if(4 == i){
+				}else if(RETURN == i){
 					fprintf(file, "else if(\'\\r\' == c){");
 				}else{
 					fprintf(file, "else if(\'%c\' == c){", i);

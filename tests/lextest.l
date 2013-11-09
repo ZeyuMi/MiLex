@@ -4,7 +4,7 @@
 
 /*regular definitions*/
 %%
- \t\n		{/* no action and no return*/}
+[ \t\n]		{/* no action and no return*/}
 if			{return IF;} 
 then		{return THEN;}
 else		{return ELSE;}

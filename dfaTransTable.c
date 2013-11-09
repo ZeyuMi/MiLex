@@ -60,7 +60,7 @@ void printDFATransTable(){
 		int i = 0;
 		while(i < 128){
 			if(0 != (temp->trans)[i])
-				printf("connects to state%d by %c,", (temp->trans)[i], i);
+				printf("connects to state%d by %d,", (temp->trans)[i], i);
 			i++;
 		}
 		if(NULL != temp->action)
