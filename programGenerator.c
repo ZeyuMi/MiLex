@@ -107,14 +107,14 @@ void generateProgram(char *filename){
 		fprintf(file, "\t\t\tcase STATE%d:", entryTemp->state);
 		fprintf(file, "\n");
 		int hasIf = 0;
-		while(i < 131){
+		while(i < 128){
 			if(0 != (entryTemp->trans)[i]){
 				hasIf = 1;
-				if(128 == i){
+				if(2 == i){
 					fprintf(file, "\t\t\t\tif(\'\\n\' == c){");
-				}else if(129 == i){
+				}else if(3 == i){
 					fprintf(file, "\t\t\t\tif(\'\\t\' == c){");
-				}else if(130 == i){
+				}else if(4 == i){
 					fprintf(file, "\t\t\t\tif(\'\\r\' == c){");
 				}else{
 					fprintf(file, "\t\t\t\tif(\'%c\' == c){", i);
@@ -130,13 +130,13 @@ void generateProgram(char *filename){
 			}
 			i++;
 		}
-		while(i < 131){
+		while(i < 128){
 			if(0 != (entryTemp->trans)[i]){
-				if(128 == i){
+				if(2 == i){
 					fprintf(file, "else if(\'\\n\' == c){");
-				}else if(129 == i){
+				}else if(3 == i){
 					fprintf(file, "else if(\'\\t\' == c){");
-				}else if(130 == i){
+				}else if(4 == i){
 					fprintf(file, "else if(\'\\r\' == c){");
 				}else{
 					fprintf(file, "else if(\'%c\' == c){", i);
