@@ -51,7 +51,6 @@ void generateProgram(char *filename){
 	fprintf(file, "\n");
 	fprintf(file, "\treturn (bufp > 0) ? buf[bufp--] : getc(yyin);");
 	fprintf(file, "\n");
-	fprintf(file, "\n");
 	fprintf(file, "}");
 	fprintf(file, "\n");
 	fprintf(file, "\n");
@@ -68,12 +67,59 @@ void generateProgram(char *filename){
 	fprintf(file, "}");
 	fprintf(file, "\n");
 
-
-
-
+	struct Funcentry *funcTemp = additionalfuncs;
+	while(NULL != funcTemp){
+		fprintf(file, "\n");
+		fprintf(file, "%s", funcTemp->body);
+		fprintf(file, "\n");
+		funcTemp = funcTemp->next;
+	}
+	fprintf(file, "\n");
 
 	fprintf(file, "int yylex(){\n");
 	
-	fprintf(file, "}\n");
+	fprintf(file, "\tstate = STATE0;");	
+	fprintf(file, "\n");
+	fprintf(file, "\tchar *p = yytext;");	
+	fprintf(file, "\n");
+	fprintf(file, "\twhile(1){");
+	fprintf(file, "\n");
+	
+	fprintf(file, "\t\tint c = input();");
+	fprintf(file, "\n");
+
+	fprintf(file, "\t\tif(EOF == c)");
+	fprintf(file, "\n");
+	fprintf(file, "\t\t\treturn c;");
+	fprintf(file, "\n");
+
+	fprintf(file, "\t\tswitch(state){");
+	fprintf(file, "\n");
+	
+	struct dfaTTEntry *entryTemp = getTable();
+	while(NULL != entryTemp){
+		fprintf(file, "\t\t\tcase STATE%d:", entryTemp->state);
+		fprintf(file, "\n");
+		while(i < 128){
+			if(0 != (entryTemp->trans)[i]){
+				fprintf(file, "\t\t\t\tif(%c == c){", i);
+				fprintf(file, "\n");
+				
+				fprintf(file, "\t\t\t\t}");
+				fprintf(file, "\n");
+			}
+			i++;
+		}
+		fprintf(file, "\t\t\t\tbreak;");
+		fprintf(file, "\n");
+		entryTemp = entryTemp->next;
+	}
+
+	fprintf(file, "\t\t}");
+	fprintf(file, "\n");
+	fprintf(file, "\t}");
+	fprintf(file, "\n");
+	fprintf(file, "}");
+	fprintf(file, "\n");
 	fclose(file);
 }
