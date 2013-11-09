@@ -18,10 +18,10 @@ void addDFANewState(int state, char *action){
 	}
 	temp = malloc(sizeof(struct dfaTTEntry));
 	temp->state = state;
-	temp->trans = malloc(sizeof(int) * 128);
+	temp->trans = malloc(sizeof(int) * 131);
 	temp->action = action;
 	int i = 0;
-	while(i < 128){
+	while(i < 131){
 		(temp->trans)[i] = 0;
 		i++;
 	}
@@ -58,7 +58,7 @@ void printDFATransTable(){
 	while(NULL != temp){
 		printf("state%d: ", temp->state);
 		int i = 0;
-		while(i < 128){
+		while(i < 131){
 			if(0 != (temp->trans)[i])
 				printf("connects to state%d by %c,", (temp->trans)[i], i);
 			i++;

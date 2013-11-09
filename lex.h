@@ -23,6 +23,6 @@ extern char *charset;
 extern char *program;
 
 #define CONSYMBOL -2
-#define NEWLINE -3
-#define TAB -4
-#define RETURN -5
+#define NEWLINE 128
+#define TAB 129
+#define RETURN 130
