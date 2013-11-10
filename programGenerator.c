@@ -68,8 +68,11 @@ void generateProgram(char *filename){
 	fprintf(file, "\n");
 	fprintf(file, "\n");
 	fprintf(file, "void error(){");
+	fprintf(file, "\n");
 	fprintf(file, "\tprintf(\"error!\\n\");");
+	fprintf(file, "\n");
 	fprintf(file, "}");
+	fprintf(file, "\n");
 	fprintf(file, "\n");
 
 	struct Funcentry *funcTemp = additionalfuncs;
@@ -86,6 +89,8 @@ void generateProgram(char *filename){
 	fprintf(file, "\tstate = STATE0;");	
 	fprintf(file, "\n");
 	fprintf(file, "\tchar *p = yytext;");	
+	fprintf(file, "\n");
+	fprintf(file, "\tyyleng = 0;");	
 	fprintf(file, "\n");
 	fprintf(file, "\twhile(1){");
 	fprintf(file, "\n");
@@ -124,6 +129,8 @@ void generateProgram(char *filename){
 				fprintf(file, "\n");
 				fprintf(file, "\t\t\t\t\t*p++ = c;");
 				fprintf(file, "\n");
+				fprintf(file, "\t\t\t\t\tyyleng++;");
+				fprintf(file, "\n");
 				fprintf(file, "\t\t\t\t}");
 				i++;
 				break;
@@ -146,6 +153,8 @@ void generateProgram(char *filename){
 				fprintf(file, "\n");
 				fprintf(file, "\t\t\t\t\t*p++ = c;");
 				fprintf(file, "\n");
+				fprintf(file, "\t\t\t\t\tyyleng++;");
+				fprintf(file, "\n");
 				fprintf(file, "\t\t\t\t}");
 			}
 			i++;
@@ -154,6 +163,16 @@ void generateProgram(char *filename){
 			fprintf(file, "else{");
 			fprintf(file, "\n");
 			if(NULL != entryTemp->action){
+				fprintf(file, "\t\t\t\t\tstate = STATE1;");
+				fprintf(file, "\n");
+				fprintf(file, "\t\t\t\t\tunput(c);");
+				fprintf(file, "\n");
+				fprintf(file, "\t\t\t\t\t*p = \'\\0\';");
+				fprintf(file, "\n");
+				fprintf(file, "\t\t\t\t\tp = yytext;");
+				fprintf(file, "\n");
+				fprintf(file, "\t\t\t\t\tyyleng= 0;");
+				fprintf(file, "\n");
 				fprintf(file, "\t\t\t\t\t%s", entryTemp->action);
 			}else{
 				fprintf(file, "\t\t\t\t\terror();");
@@ -163,6 +182,17 @@ void generateProgram(char *filename){
 			fprintf(file, "\n");
 		}else{
 			if(NULL != entryTemp->action){
+				fprintf(file, "\t\t\t\tstate = STATE1;");
+				fprintf(file, "\n");
+				fprintf(file, "\t\t\t\tunput(c);");
+				fprintf(file, "\n");
+				fprintf(file, "\t\t\t\t*p = \'\\0\';");
+				fprintf(file, "\n");
+				fprintf(file, "\n");
+				fprintf(file, "\t\t\t\tp = yytext;");
+				fprintf(file, "\n");
+				fprintf(file, "\t\t\t\tyyleng= 0;");
+				fprintf(file, "\n");
 				fprintf(file, "\t\t\t\t%s", entryTemp->action);
 			}else{
 				fprintf(file, "\t\t\t\terror();");
