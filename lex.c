@@ -8,43 +8,6 @@
 #include "programGenerator.h"
 #include "dfaTransTable.h"
 
-char *declarations = NULL;
-struct Defentry *definitions = NULL;
-struct REentry *regexps = NULL;
-struct Funcentry *additionalfuncs = NULL;
-
-char *charset = " !\\\"#$%&'\\(\\)\\*\\+,-./0123456789:;<=>\\?@ABCDEFGHIJKLMNOPQRSTUVWXYZ\\[\\\\\\]^_`abcdefghijklmnopqrstuvwxyz{\\|}~";
-
-char *program = NULL;
-
-void output();
-int main(int argc, char **argv){
-	if(1 == argc){
-		fprintf(stderr, "MiLex needs one input file\n");
-		return 1;
-	}else{
-		char *filename = *++argv;
-		FILE *file = fopen(filename, "r");
-		if(NULL == file){
-			fprintf(stderr, "MiLex cannot read file %s\n", filename);
-			return 1;
-		}
-		if(-1 == readFile(file)){
-			fprintf(stderr, "the format of %s does not conform to MiLex\n", filename);
-			return 1;
-		}
-		preprocess();
-		output();
-		constructNFA();
-		constructDFA();
-		printDFATransTable();
-		optimizeDFA();
-		generateProgram("lex.yy.c");
-		return 0;
-	}
-}
-
-
 void output(){
 	struct Defentry *p = definitions;
 	while(NULL != p){
@@ -61,6 +24,44 @@ void output(){
 	while(NULL != f){
 		printf("%s\n", f->body);
 		f = f->next;
+	}
+}
+
+
+
+
+char *declarations = NULL;
+struct Defentry *definitions = NULL;
+struct REentry *regexps = NULL;
+struct Funcentry *additionalfuncs = NULL;
+
+char *charset = " !\\\"#$%&'\\(\\)\\*\\+,-./0123456789:;<=>\\?@ABCDEFGHIJKLMNOPQRSTUVWXYZ\\[\\\\\\]^_`abcdefghijklmnopqrstuvwxyz{\\|}~";
+
+char *program = NULL;
+
+int main(int argc, char **argv){
+	if(1 == argc){
+		fprintf(stderr, "MiLex needs one input file\n");
+		return 1;
+	}else{
+		char *filename = *++argv;
+		FILE *file = fopen(filename, "r");
+		if(NULL == file){
+			fprintf(stderr, "MiLex cannot read file %s\n", filename);
+			return 1;
+		}
+		if(-1 == readFile(file)){
+			fprintf(stderr, "the format of %s does not conform to MiLex\n", filename);
+			return 1;
+		}
+		output();
+		preprocess();
+		output();
+		//constructNFA();
+		//constructDFA();
+		//optimizeDFA();
+		//generateProgram("lex.yy.c");
+		return 0;
 	}
 }
 

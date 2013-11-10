@@ -128,9 +128,7 @@ void generateProgram(char *filename){
 				}else if(RETURN == i){
 					fprintf(file, "\t\t\t\tif(\'\\r\' == c){");
 				}else{
-					if('\"' == i){
-						fprintf(file, "\t\t\t\tif(\'\\\"\' == c){");
-					}else if('\'' == i){
+					if('\'' == i){
 						fprintf(file, "\t\t\t\tif(\'\\\'\' == c){");
 					}else if('\\' == i){
 						fprintf(file, "\t\t\t\tif(\'\\\\\' == c){");
@@ -160,9 +158,7 @@ void generateProgram(char *filename){
 				}else if(RETURN == i){
 					fprintf(file, "else if(\'\\r\' == c){");
 				}else{
-					if('\"' == i){
-						fprintf(file, "else if(\'\\\"\' == c){");
-					}else if('\'' == i){
+					if('\'' == i){
 						fprintf(file, "else if(\'\\\'\' == c){");
 					}else if('\\' == i){
 						fprintf(file, "else if(\'\\\\\' == c){");

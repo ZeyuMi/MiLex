@@ -204,7 +204,7 @@ int readRESec(){
 				if('/' == c){
 					state = STATE1;
 				}else if('%' == c){
-					state = STATE9;
+					state = STATE10;
 				}else if('\t' == c || ' ' == c || '\n' == c){
 					state = STATE0;
 				}else{
@@ -249,22 +249,26 @@ int readRESec(){
 				break;
 			case STATE5:
 				if(' ' == c || '\t' == c){
-					state = STATE7;
+					state = STATE8;
 					addCharElement(bufferid, '\0');
 					insertREEntry(getCharBuffer(bufferid));
 					rewindCharPointer(bufferid);
 				}else if('\n' == c){
 					error("lexReader readRESec STATE5");
-				}else if('\"' == c || '[' == c){
+				}else if('\"' == c){
 					state = STATE6;
 					addCharElement(bufferid,c);
+				}else if('[' == c){
+					state = STATE7;
+					addCharElement(bufferid, c);
 				}else{
 					state = STATE5;
 					addCharElement(bufferid,c);
 				}
 				break;
+		
 			case STATE6:
-				if('\"' == c || ']' == c){
+				if('\"' == c){
 					state = STATE5;
 					addCharElement(bufferid,c);
 				}else if('\n' == c || '\t' == c){
@@ -275,26 +279,37 @@ int readRESec(){
 				}
 				break;
 			case STATE7:
-				if(' ' == c || '\t' == c){
+				if(']' == c){
+					state = STATE5;
+					addCharElement(bufferid,c);
+				}else if('\n' == c || '\t' == c){
+					error("lexReader readRESec STATE6");
+				}else{
 					state = STATE7;
-				}else if('{' == c){
+					addCharElement(bufferid,c);
+				}
+				break;
+			case STATE8:
+				if(' ' == c || '\t' == c){
 					state = STATE8;
+				}else if('{' == c){
+					state = STATE9;
 				}else{
 					error("lexReader readRESec STATE7");
 				}
 				break;
-			case STATE8:
+			case STATE9:
 				if('}' == c){
 					state = STATE0;
 					addCharElement(bufferid, '\0');
 					insertREAction(getCharBuffer(bufferid));
 					rewindCharPointer(bufferid);
 				}else{
-					state = STATE8;
+					state = STATE9;
 					addCharElement(bufferid,c);
 				}
 				break;
-			case STATE9:
+			case STATE10:
 				if('%' == c){
 					state = STATE0;
 					destroyCharBuffer(bufferid);

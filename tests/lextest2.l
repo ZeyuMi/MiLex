@@ -5,7 +5,6 @@
 #include "token.h"
 
 int yylval;
-
 static struct tabentry *idtable = NULL;
 static struct tabentry *idp = NULL;
 static int idnumnow = 0;
@@ -15,13 +14,14 @@ static int opnumnow = 0;
 static struct tabentry *numtable = NULL;
 static struct tabentry *nump = NULL;
 static int numnumnow = 0;
-
 %}
+
 delim	 [ \t\n]
 letter	 [A-Za-z]
 digit	 [0-9]
 
 %%
+
 {delim}+		{/*no action and no return */}
 auto			{return AUTO;}
 break			{return BREAK;}
@@ -56,9 +56,12 @@ void			{return VOID;}
 volatile		{return VOLATILE;}
 while			{return WHILE;}
 _Packed			{return _PACKED;}
+
+({letter}|_)({letter}|{digit}|_)*  {yylval = installID(); return ID;} 
+{digit}+(\.{digit}+)?(E[+-]?{digit}+)? {yylval = installNum(); return NUM;}
+":"				{return COLON;}
 ","				{return COMMA;}
 ";"				{return SEMICOLON;}
-\.			{return DOT;}
 "("				{return LEFTPAREN;}
 ")"				{return RIGHTPAREN;}
 "["				{return LEFTBRACKET;}
@@ -85,8 +88,19 @@ _Packed			{return _PACKED;}
 "<"				{yylval = installOP(); return OP;}
 "&"				{yylval = installOP(); return OP;}
 "->"			{yylval = installOP(); return OP;}
-({letter}|_)({letter}|{digit}|_)*  {yylval = installID(); return ID;} 
-{digit}+(\.{digit}+)?(E[+-]?{digit}+)? {yylval = installNum(); return NUM;}
+
+"|"				{return BITINCLUOR;}
+"&"				{return BITAND;}
+"^"				{return BITEXCLUEOR;}
+"~"				{return COMPLEMENT;}
+"||"			{return LOGICOR;}
+"&&"			{return LOGICAND;}
+"!"				{return LOGICNOT;}
+
+"?"				{return CONEXPSYMBOL;}
+
+'(.|\\.)'		{return CHARLITERAL;}
+\".*\"			{return STRINGLITERAL;}
 
 %%
 

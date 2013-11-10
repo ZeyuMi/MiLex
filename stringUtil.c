@@ -31,7 +31,14 @@ char *infixToPostfix(char *origin){
 				}
 			}
 		}else{
-			addCharElement(bufferid, c);
+			if('\\' == c){
+				addCharElement(bufferid, c);
+				pos++;
+				c = *(origin+pos);
+				addCharElement(bufferid, c);
+			}else{
+				addCharElement(bufferid, c);
+			}
 		}
 		pos++;
 	}

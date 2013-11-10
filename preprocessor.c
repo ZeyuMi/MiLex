@@ -10,7 +10,6 @@
 void replaceAllDef();
 void substitute();
 
-
 void preprocess(){
 	replaceAllDef();
 	substitute();
@@ -63,6 +62,7 @@ void substitute(){
 		retemp->regexp = addConSymbol(retemp->regexp);
 		retemp = retemp->next;
 	}
+	output();
 }
 
 
@@ -292,6 +292,9 @@ char *substituteCharClass(char *origin){
 					state = STATE1;
 					addCharElement(bufferid, '(');
 				}else if('\\' == c){
+					state = STATE2;
+					addCharElement(bufferid, c);
+				}else if('"' == c){
 					state = STATE3;
 					addCharElement(bufferid, c);
 				}else{
@@ -300,13 +303,14 @@ char *substituteCharClass(char *origin){
 				}
 				break;
 			case STATE1:
-				if('\\' == c){
-					state = STATE2;
-					addCharElement(bufferid, c);
-				}else if(']' == c){
+				if(']' == c){
 					state = STATE0;
 					removeCharLast(bufferid);
 					addCharElement(bufferid, ')');
+				}else if('|' == c || '*' == c || '?' == c || '+' == c || '[' == c || ']' == c || '(' == c || ')' == c || '\\' == c){
+					state = STATE1;
+					addCharElement(bufferid, '\\');
+					addCharElement(bufferid, c);
 				}else{
 					state = STATE1;
 					addCharElement(bufferid, c);
@@ -314,13 +318,17 @@ char *substituteCharClass(char *origin){
 				}
 				break;
 			case STATE2:
-				state = STATE1;
-				addCharElement(bufferid, c);
-				addCharElement(bufferid, '|');
-				break;
-			case STATE3:
 				state = STATE0;
 				addCharElement(bufferid, c);
+				break;
+			case STATE3:
+				if('"' == c){
+					state = STATE0;
+					addCharElement(bufferid, c);
+				}else{
+					state = STATE3;
+					addCharElement(bufferid, c);
+				}
 				break;
 			default:
 				error("entering wrong state");
@@ -395,9 +403,9 @@ char *removeDoubleQuote(char *origin){
 		switch(state){
 			case STATE0:
 				if('"' == c){
-					state = STATE0;
-				}else if('\\' == c){
 					state = STATE1;
+				}else if('\\' == c){
+					state = STATE2;
 					addCharElement(bufferid, c);
 				}else{
 					state = STATE0;
@@ -405,6 +413,18 @@ char *removeDoubleQuote(char *origin){
 				}
 				break;
 			case STATE1:
+				if('"' == c){
+					state = STATE0;
+				}else if('|' == c || '*' == c || '?' == c || '+' == c || '[' == c || ']' == c || '(' == c || ')' == c || '\\' == c){
+					state = STATE1;
+					addCharElement(bufferid, '\\');
+					addCharElement(bufferid, c);
+				}else{
+					state = STATE1;
+					addCharElement(bufferid, c);
+				}
+				break;
+			case STATE2:
 				state = STATE0;
 				addCharElement(bufferid, c);
 				break;
@@ -475,7 +495,7 @@ char *addConSymbol(char *origin){
 				}
 				break;
 			case STATE3:
-				state = STATE0;
+				state = STATE2;
 				addCharElement(bufferid, c);
 				break;
 			default:

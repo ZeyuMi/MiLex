@@ -22,7 +22,6 @@ void constructNFA(){
 		free(postfix);
 		retemp = retemp->next;
 	}
-	printGraph();
 }
 
 

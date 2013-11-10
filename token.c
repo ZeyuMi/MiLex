@@ -23,7 +23,7 @@ int state = STATE0;
 
 static struct tabentry *idtable = NULL;
 static struct tabentry *idp = NULL;
-static int idnumnow = 0;
+static int idnumnow = 2120;
 static struct tabentry *optable = NULL;
 static struct tabentry *opp = NULL;
 static int opnumnow = 0;

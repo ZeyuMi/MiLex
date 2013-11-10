@@ -35,19 +35,30 @@
 #define	VOLATILE 35
 #define	WHILE 36
 #define	_PACKED 37
-#define COMMA 38
-#define SEMICOLON 39
-#define DOT 40
-#define LEFTPAREN 41
-#define RIGHTPAREN 42
-#define LEFTBRACKET 43
-#define RIGHTBRACKET 44
-#define LEFTBRACE 45
-#define RIGHTBRACE 46
-#define CHARLITERAL 47
-#define STRINGLITERAL 48
+#define COLON 38
+#define COMMA 39
+#define SEMICOLON 40
+#define DOT 41
+#define LEFTPAREN 42
+#define RIGHTPAREN 43
+#define LEFTBRACKET 44
+#define RIGHTBRACKET 45
+#define LEFTBRACE 46
+#define RIGHTBRACE 47
+#define CHARLITERAL 48
+#define STRINGLITERAL 49
 
+#define BITINCLUOR 50
+#define BITAND 51
+#define BITEXCLUEOR 52
+#define COMPLEMENT 53
+#define LOGICOR 54
+#define LOGICAND 55
+#define LOGICNOT 56
 
+#define CONEXPSYMBOL 57
+#define CHARLITERAL 58
+#define STRINGLITERAL 59
 
 struct tabentry{
 	int sequnceid;
