@@ -20,7 +20,7 @@ void generateProgram(char *filename){
 	fprintf(file, "\n");
 	
 	int stateNum = getTableEntryNum();
-	int i = 0;
+	int i = 1;
 	while(i <= stateNum){
 		fprintf(file, "\t\tSTATE");
 		fprintf(file, "%d", i);
@@ -30,12 +30,10 @@ void generateProgram(char *filename){
 	}
 	fprintf(file, "\t\t};");
 	fprintf(file, "\n");
-	fprintf(file, "int state = STATE0;");
+	fprintf(file, "int state = STATE1;");
 	fprintf(file, "\n");
 
-	fprintf(file, "FILE *yyin = stdin;");
-	fprintf(file, "\n");
-	fprintf(file, "FILE *yyout = stdout;");
+	fprintf(file, "FILE *yyin;");
 	fprintf(file, "\n");
 	fprintf(file, "char yytext[YYLMAX];");
 	fprintf(file, "\n");
@@ -45,7 +43,7 @@ void generateProgram(char *filename){
 	fprintf(file, "\n");
 	fprintf(file, "char buf[BUFSIZE];");
 	fprintf(file, "\n");
-	fprintf(file, "int bufp = 0");
+	fprintf(file, "int bufp = 0;");
 	fprintf(file, "\n");
 	fprintf(file, "char input(){");
 	fprintf(file, "\n");
@@ -75,6 +73,14 @@ void generateProgram(char *filename){
 	fprintf(file, "\n");
 	fprintf(file, "\n");
 
+	fprintf(file, "void setIn(FILE *in){");
+	fprintf(file, "\n");
+	fprintf(file, "\tyyin = in;");
+	fprintf(file, "\n");
+	fprintf(file, "}");
+	fprintf(file, "\n");
+	fprintf(file, "\n");
+
 	struct Funcentry *funcTemp = additionalfuncs;
 	while(NULL != funcTemp){
 		fprintf(file, "\n");
@@ -86,7 +92,7 @@ void generateProgram(char *filename){
 
 	fprintf(file, "int yylex(){\n");
 	
-	fprintf(file, "\tstate = STATE0;");	
+	fprintf(file, "\tstate = STATE1;");	
 	fprintf(file, "\n");
 	fprintf(file, "\tchar *p = yytext;");	
 	fprintf(file, "\n");
@@ -122,7 +128,15 @@ void generateProgram(char *filename){
 				}else if(RETURN == i){
 					fprintf(file, "\t\t\t\tif(\'\\r\' == c){");
 				}else{
-					fprintf(file, "\t\t\t\tif(\'%c\' == c){", i);
+					if('\"' == i){
+						fprintf(file, "\t\t\t\tif(\'\\\"\' == c){");
+					}else if('\'' == i){
+						fprintf(file, "\t\t\t\tif(\'\\\'\' == c){");
+					}else if('\\' == i){
+						fprintf(file, "\t\t\t\tif(\'\\\\\' == c){");
+					}else{
+						fprintf(file, "\t\t\t\tif(\'%c\' == c){", i);
+					}
 				}
 				fprintf(file, "\n");
 				fprintf(file, "\t\t\t\t\tstate = STATE%d;", (entryTemp->trans)[i]);
@@ -146,7 +160,15 @@ void generateProgram(char *filename){
 				}else if(RETURN == i){
 					fprintf(file, "else if(\'\\r\' == c){");
 				}else{
-					fprintf(file, "else if(\'%c\' == c){", i);
+					if('\"' == i){
+						fprintf(file, "else if(\'\\\"\' == c){");
+					}else if('\'' == i){
+						fprintf(file, "else if(\'\\\'\' == c){");
+					}else if('\\' == i){
+						fprintf(file, "else if(\'\\\\\' == c){");
+					}else{
+						fprintf(file, "else if(\'%c\' == c){", i);
+					}
 				}
 				fprintf(file, "\n");
 				fprintf(file, "\t\t\t\t\tstate = STATE%d;", (entryTemp->trans)[i]);

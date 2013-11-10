@@ -34,21 +34,21 @@ int main(int argc, char *argv[]){
 				int tokenname;
 				fprintf(outputfile, "file %s\n", filename);
 				setIn(file);
-				while((tokenname=getToken()) != EOF){
-					switch(tokenname){
-						case OP:
-						case ID:
-							fprintf(outputfile, "<%d,%s,%d>\n", tokenname, yytext, yylval);
-							break;
-						case ASSIGN:
-						case NUMBER:
-							fprintf(outputfile, "<%d,%s>\n", tokenname, yytext);
-							break;
-						default:
-							;
-					}
+				while((tokenname=yylex()) != EOF){
+					fprintf(outputfile, "<%d,%s>\n", tokenname, yytext);
+					//switch(tokenname){
+					//	case OP:
+					//	case ID:
+					//		fprintf(outputfile, "<%d,%s,%d>\n", tokenname, yytext, yylval);
+					//		break;
+					//	case ASSIGN:
+					//	case NUM:
+					//		fprintf(outputfile, "<%d,%s>\n", tokenname, yytext);
+					//		break;
+					//	default:
+					//		;
+					//}
 				}
-				unsetIn();
 				fclose(file);
 				free(filename);
 				i++;

@@ -1,12 +1,3 @@
-#include<stdio.h>
-#include<stdlib.h>
-#include<string.h>
-#include<ctype.h>
-#include"token.h"
-
-#define BUFSIZE 100
-
-
 enum states {
 			STATE0 = 1,
 			STATE1,
@@ -54,8 +45,8 @@ void setIn(FILE *inputFile){
 
 void unsetIn(){
 	in = NULL;
-	outputtable("idtable", idtable);
-	outputtable("optable", optable);
+	outputtable(, idtable);
+	outputtable(, optable);
 	idtable = idp = optable = opp = NULL;
 	idnumnow = opnumnow = 0;
 }
@@ -69,35 +60,35 @@ int getToken(){
 			return c;
 		switch(state){
 			case STATE0:
-				if(c == '/'){
+				if(c == ){
 					state = STATE1;
-				}else if(c == ' ' || c == '\t'){
+				}else if(c == ){
 					state = STATE8;	
-				}else if(c == '_' || isalpha(c)){
+				}else if(c ==  || isalpha(c)){
 					state = STATE9;
 					*p++ = c;
 				}else if(isdigit(c)){
 					state = STATE10;
 					*p++ = c;
-				}else if(c == '.'){
+				}else if(c == ){
 					state = STATE11;
 					*p++ = c;
-				}else if(c == '='){
+				}else if(c == ){
 					state = STATE12;
 					*p++ = c;
-				}else if(c == '>'){
+				}else if(c == ){
 					state = STATE13;
 					*p++ = c;
-				}else if(c == '<'){
+				}else if(c == ){
 					state = STATE14;
 					*p++ = c;
-				}else if(c == '+'){
+				}else if(c == ){
 					state = STATE15;
 					*p++ = c;
-				}else if(c == '-'){
+				}else if(c == ){
 					state = STATE16;
 					*p++ = c;
-				}else if(c == '*' || c == '%'){
+				}else if(c == ){
 					state = STATE17;
 					*p++ = c;
 				}else{
@@ -105,44 +96,44 @@ int getToken(){
 				}
 				break;
 			case STATE1:
-				if(c == '*'){
+				if(c == ){
 					state = STATE2;
-				}else if(c == '/'){
+				}else if(c == ){
 					state = STATE3;	
-				}else if(c == '='){
+				}else if(c == ){
 					state = STATE17;
-					*p++ = '/';
-					*p++ = '=';
-					*p = '\0';
+					*p++ = ;
+					*p++ = ;
+					*p = ;
 					yylval = installOP();
 					return OP;
 				}else{
 					state = STATE0;
-					*p++ = '/';
-					*p = '\0';
+					*p++ = ;
+					*p = ;
 					ungetch(c);
 					yylval = installOP();
 					return OP;
 				}
 				break;
 			case STATE2:
-				if(c == '*'){
+				if(c == ){
 					state = STATE4;
 				}else{
 					state = STATE2;
 				}
 				break;
 			case STATE3:
-				if(c == '\n'){
+				if(c == ){
 					state = STATE0;
 				}else{
 					state = STATE3;
 				}
 				break;
 			case STATE4:
-				if(c == '*'){
+				if(c == ){
 					state = STATE4;
-				}else if(c == '/'){
+				}else if(c == ){
 					state = STATE0;
 				}else{
 					state = STATE2;
@@ -158,7 +149,7 @@ int getToken(){
 				
 				break;
 			case STATE8:
-				if(c == ' ' || c == '\t'){
+				if(c == ){
 					state = STATE8;
 				}else{
 					state = STATE0;
@@ -166,13 +157,13 @@ int getToken(){
 				}
 				break;
 			case STATE9:
-				if(c == '_' || isalnum(c)){
+				if(c ==  || isalnum(c)){
 					state = STATE9;
 					*p++ = c;
 				}
 				else{
 					state = STATE0;
-					*p = '\0';
+					*p = ;
 					ungetch(c);
 					yylval = installID();
 					return ID;
@@ -182,12 +173,12 @@ int getToken(){
 				if(isdigit(c)){
 					state = STATE10;
 					*p++ = c;
-				}else if(c == '.'){
+				}else if(c == ){
 					state = STATE11;
 					*p++ = c;
 				}else{
 					state = STATE0;
-					*p = '\0';
+					*p = ;
 					ungetch(c);
 					return NUMBER;
 				}
@@ -198,119 +189,119 @@ int getToken(){
 					*p++ = c;
 				}else{
 					state = STATE0;
-					*p = '\0';
+					*p = ;
 					ungetch(c);
 					return NUMBER;
 				}
 				break;
 			case STATE12:
-				if(c == '='){
+				if(c == ){
 					state = STATE0;
 					*p++ = c;
-					*p = '\0';
+					*p = ;
 					yylval = installOP();
 					return OP;
 				}else{
 					state = STATE0;
-					*p = '\0';
+					*p = ;
 					ungetch(c);
 					return ASSIGN;
 				}
 				break;
 			case STATE13:
-				if(c == '>'){
+				if(c == ){
 					state = STATE0;
 					*p++ = c;
-					*p = '\0';
+					*p = ;
 					yylval = installOP();
 					return OP;
-				}else if(c == '='){
+				}else if(c == ){
 					state = STATE0;
 					*p++ = c;
-					*p = '\0';
+					*p = ;
 					yylval = installOP();
 					return OP;
 				}else{
 					state = STATE0;
-					*p = '\0';
+					*p = ;
 					ungetch(c);
 					yylval = installOP();
 					return OP;
 				}
 				break;
 			case STATE14:
-				if(c == '<'){
+				if(c == ){
 					state = STATE0;
 					*p++ = c;
-					*p = '\0';
+					*p = ;
 					yylval = installOP();
 					return OP;
-				}else if(c == '='){
+				}else if(c == ){
 					state = STATE0;
 					*p++ = c;
-					*p = '\0';
+					*p = ;
 					yylval = installOP();
 					return OP;
 				}else{
 					state = STATE0;
-					*p = '\0';
+					*p = ;
 					ungetch(c);
 					yylval = installOP();
 					return OP;
 				}
 				break;
 			case STATE15:
-				if(c == '='){
+				if(c == ){
 					state = STATE0;
 					*p++ = c;
-					*p = '\0';
+					*p = ;
 					yylval = installOP();
 					return OP;
-				}else if(c == '+'){
+				}else if(c == ){
 					state = STATE0;
 					*p++ = c;
-					*p = '\0';
+					*p = ;
 					yylval = installOP();
 					return OP;
 				}else{
 					state = STATE0;
-					*p = '\0';
+					*p = ;
 					ungetch(c);
 					yylval = installOP();
 					return OP;
 				}
 				break;
 			case STATE16:
-				if(c == '='){
+				if(c == ){
 					state = STATE0;
 					*p++ = c;
-					*p = '\0';
+					*p = ;
 					yylval = installOP();
 					return OP;
-				}else if(c == '-'){
+				}else if(c == ){
 					state = STATE0;
 					*p++ = c;
-					*p = '\0';
+					*p = ;
 					yylval = installOP();
 					return OP;
 				}else{
 					state = STATE0;
-					*p = '\0';
+					*p = ;
 					ungetch(c);
 					yylval = installOP();
 					return OP;
 				}
 				break;
 			case STATE17:
-				if(c == '='){
+				if(c == ){
 					state = STATE0;
 					*p++ = c;
-					*p = '\0';
+					*p = ;
 					yylval = installOP();
 					return OP;
 				}else{
 					state = STATE0;
-					*p = '\0';
+					*p = ;
 					ungetch(c);
 					yylval = installOP();
 					return OP;
@@ -358,12 +349,12 @@ int installOP(){
 
 void outputtable(char *tabname, struct tabentry *tabhead){
 	char *filename = tabname;
-	FILE *file = fopen(filename, "w");
-	fprintf(file, "%s,%s\n", "id", "lexem");
+	FILE *file = fopen(filename, );
+	fprintf(file, );
 	struct tabentry *p = tabhead;
 	struct tabentry *pre = NULL;
 	while(p != NULL){
-		fprintf(file, "%d,%s\n", p->sequnceid, p->lexem);
+		fprintf(file, , p->sequnceid, p->lexem);
 		pre = p;
 		p = p->next;
 		free(pre);
@@ -374,7 +365,7 @@ void outputtable(char *tabname, struct tabentry *tabhead){
 
 
 void error(){
-	printf("ERROR: entering wrong state\n");	
+	printf();	
 }
 
 
@@ -388,7 +379,7 @@ int getch(){
 
 void ungetch(int c){
 	if(bufp >= BUFSIZE-1)
-		printf("ERROR: buffer is full\n");
+		printf();
 	else
 		buf[++bufp] = c;
 }
