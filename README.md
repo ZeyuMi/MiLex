@@ -4,7 +4,7 @@
 
 MiLex is a project for generating lexical analyzer, whose idea is exactly the same as Flex. 
 
-### FeaturesO
+### Features
 
 * Supporting not only regular expression meta symbols described in Dragon book, such as * | (), but also some other symbols like ? + []
 * Converting regular expression to its corresponding non-deterministic finite automaton(NFA)
