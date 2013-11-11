@@ -1,4 +1,32 @@
-MiLex
-=====
+# MiLex
 
-The implementation of lexical analyzer generator in C. With the deeper understanding of lex, I will add more features to it and make it more error endurable.
+## Introduction
+
+MiLex is a project for generating lexical analyzer, whose idea is exactly the same as Flex. 
+
+### FeaturesO
+
+* Supporting not only regular expression meta symbols described in Dragon book, such as * | (), but also some other symbols like ? + []
+* Converting regular expression to its corresponding non-deterministic finite automaton(NFA)
+* Converting NFA to a DFA(Deterministic finite automaton)
+* Optimizeing a DFA to a DFA with minimum states(Not included now)
+* Generating lexical analyzer from an optimized DFA
+
+## Usage
+Build sources:
+
+    make
+
+Write your own lex.l which defines lexical grammers
+
+
+Generate lex.yy.c:
+
+	./Milex lex.l
+
+## Examples
+
+
+## Contributors
+
+* [ZeyuMi](http://www.github.com/ZeyuMi)
