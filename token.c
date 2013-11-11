@@ -1,5 +1,4 @@
-enum states {
-			STATE0 = 1,
+enum states{STATE0 = 1,    //sasdda		aad
 			STATE1,
 			STATE2,
 			STATE3,
@@ -12,299 +11,442 @@ enum states {
 			STATE10,
 			STATE11,
 			STATE12,
-			STATE13,
-			STATE14,
-			STATE15,
-			STATE16,
-			STATE17,
 			};
 
-int state = STATE0;
+/*t
+		assadest*/
 
-static struct tabentry *idtable = NULL;
-static struct tabentry *idp = NULL;
-static int idnumnow = 2120;
-static struct tabentry *optable = NULL;
-static struct tabentry *opp = NULL;
-static int opnumnow = 0;
-int installID();
-int installOP();
+FILE *in = NULL;
+
+int readDeclareSec();
+int readRESec();
+int readFuncSec();
+
+int readFile(FILE *file){
+	if(file == NULL)
+		return -1;
+	in = file;
+	if(ERROR == readDeclareSec())
+		return -1;
+	if(ERROR == readRESec())
+		return -1;
+	if(ERROR == readFuncSec())
+		return -1;
+	return 1;
+}
+
+
 int getch();
-void ungetch(int);
-void error();
-void outputtable(char *, struct tabentry *);
+void ungetch(int );
+void insertDefEntry(char *);
+void insertDefContent(char *);
+void insertREEntry(char *);
+void insertREAction(char *);
+void insertFuncEntry(char *);
 
-char yytext[TOKENSIZE];
-int yyleng;
-int yylval;
-FILE *in;
 
-void setIn(FILE *inputFile){
-	in = inputFile;
-}
-
-void unsetIn(){
-	in = NULL;
-	outputtable(, idtable);
-	outputtable(, optable);
-	idtable = idp = optable = opp = NULL;
-	idnumnow = opnumnow = 0;
-}
-
-int getToken(){
-	state = STATE0;
-	char *p = yytext;
+struct Defentry *defp = NULL;
+int readDeclareSec(){
+	int bufferid = initializeCharBuffer();
+	int state = STATE0;
 	while(1){
 		int c = getch();
 		if(c == EOF)
-			return c;
+			return ERROR;
 		switch(state){
 			case STATE0:
-				if(c == ){
+				if( == c){
 					state = STATE1;
-				}else if(c == ){
-					state = STATE8;	
-				}else if(c ==  || isalpha(c)){
+				}else if( == c){
 					state = STATE9;
-					*p++ = c;
-				}else if(isdigit(c)){
-					state = STATE10;
-					*p++ = c;
-				}else if(c == ){
-					state = STATE11;
-					*p++ = c;
-				}else if(c == ){
-					state = STATE12;
-					*p++ = c;
-				}else if(c == ){
-					state = STATE13;
-					*p++ = c;
-				}else if(c == ){
-					state = STATE14;
-					*p++ = c;
-				}else if(c == ){
-					state = STATE15;
-					*p++ = c;
-				}else if(c == ){
-					state = STATE16;
-					*p++ = c;
-				}else if(c == ){
-					state = STATE17;
-					*p++ = c;
-				}else{
+				}else if( == c){
 					state = STATE0;
+				}else{
+					state = STATE5;
+					addCharElement(bufferid, c);
 				}
 				break;
 			case STATE1:
-				if(c == ){
+				if( == c){
 					state = STATE2;
-				}else if(c == ){
-					state = STATE3;	
-				}else if(c == ){
-					state = STATE17;
-					*p++ = ;
-					*p++ = ;
-					*p = ;
-					yylval = installOP();
-					return OP;
+				}else if( == c){
+					state = STATE4;
+				}else if( == c){
+					error();
 				}else{
-					state = STATE0;
-					*p++ = ;
-					*p = ;
-					ungetch(c);
-					yylval = installOP();
-					return OP;
+					state = STATE5;
+					addCharElement(bufferid, c);
 				}
 				break;
 			case STATE2:
-				if(c == ){
-					state = STATE4;
+				if( == c){
+					state = STATE3;
 				}else{
 					state = STATE2;
 				}
 				break;
 			case STATE3:
-				if(c == ){
-					state = STATE0;
-				}else{
+				if( == c){
 					state = STATE3;
-				}
-				break;
-			case STATE4:
-				if(c == ){
-					state = STATE4;
-				}else if(c == ){
+				}else if( == c){
 					state = STATE0;
 				}else{
 					state = STATE2;
 				}
 				break;
+			case STATE4:
+				if( == c){
+					state = STATE0;
+				}else{
+					state = STATE4;
+				}
+				break;
 			case STATE5:
-
+				if( == c){
+					state = STATE6;
+					addCharElement(bufferid, );
+					insertDefEntry(getCharBuffer(bufferid));
+					rewindCharPointer(bufferid);
+				}else if( == c){
+					error();
+				}else{
+					state = STATE5;
+					addCharElement(bufferid, c);
+				}
 				break;
 			case STATE6:
-				
+				if( == c){
+					state = STATE6;
+				}else if( == c){
+					error();
+				}else{
+					state = STATE7;
+					ungetch(c);
+				}
 				break;
 			case STATE7:
-				
+				if( == c){
+					state = STATE0;
+					addCharElement(bufferid, );
+					insertDefContent(getCharBuffer(bufferid));
+					rewindCharPointer(bufferid);
+				}else if( == c){
+					state = STATE8;
+					addCharElement(bufferid, c);
+				}else{
+					state = STATE7;
+					addCharElement(bufferid, c);
+				}
 				break;
 			case STATE8:
-				if(c == ){
-					state = STATE8;
+				if( == c){
+					state = STATE7;
+					addCharElement(bufferid, c);
+				}else if( == c){
+					error();
 				}else{
-					state = STATE0;
-					ungetch(c);
+					state = STATE8;
+					addCharElement(bufferid, c);
 				}
 				break;
 			case STATE9:
-				if(c ==  || isalnum(c)){
-					state = STATE9;
-					*p++ = c;
-				}
-				else{
+				if( == c){
+					state = STATE10;
+				}else if( == c){
 					state = STATE0;
-					*p = ;
-					ungetch(c);
-					yylval = installID();
-					return ID;
+					destroyCharBuffer(bufferid);
+					return 1;
+				}else{
+					error();
 				}
 				break;
 			case STATE10:
-				if(isdigit(c)){
-					state = STATE10;
-					*p++ = c;
-				}else if(c == ){
+				if( == c){
 					state = STATE11;
-					*p++ = c;
 				}else{
-					state = STATE0;
-					*p = ;
-					ungetch(c);
-					return NUMBER;
+					state = STATE10;
+					addCharElement(bufferid, c);
 				}
 				break;
 			case STATE11:
-				if(isdigit(c)){
-					state = STATE11;
-					*p++ = c;
-				}else{
+				if( == c){
 					state = STATE0;
-					*p = ;
-					ungetch(c);
-					return NUMBER;
+				    declarations = malloc(charSize(bufferid));
+					strcpy(declarations, getCharBuffer(bufferid));
+					rewindCharPointer(bufferid);
+				}else{
+					error();
 				}
 				break;
-			case STATE12:
-				if(c == ){
+			default:
+				error();
+		}
+	}
+}
+
+struct REentry *rep = NULL;
+int readRESec(){
+	int bufferid = initializeCharBuffer();
+	int state = STATE0;
+	while(1){
+		char c = getch();
+		if(c == EOF)
+			return ERROR;
+		switch(state){
+			case STATE0:
+				if( == c){
+					state = STATE1;
+				}else if( == c){
+					state = STATE10;
+				}else if( == c){
 					state = STATE0;
-					*p++ = c;
-					*p = ;
-					yylval = installOP();
-					return OP;
 				}else{
-					state = STATE0;
-					*p = ;
+					state = STATE5;
 					ungetch(c);
-					return ASSIGN;
 				}
 				break;
-			case STATE13:
-				if(c == ){
+			case STATE1:
+				if( == c){
+					state = STATE2;
+				}else if( == c){
+					state = STATE4;
+				}else if( == c){
+					error();
+				}else{
+					state = STATE5;
+					ungetch(c);
+				}
+				break;
+			case STATE2:
+				if( == c){
+					state = STATE3;
+				}else{
+					state = STATE2;
+				}
+				break;
+			case STATE3:
+				if( == c){
+					state = STATE3;
+				}else if( == c){
 					state = STATE0;
-					*p++ = c;
-					*p = ;
-					yylval = installOP();
-					return OP;
+				}else{
+					state = STATE2;
+				}
+				break;
+			case STATE4:
+				if( == c){
+					state = STATE0;
+				}else{
+					state = STATE4;
+				}
+				break;
+			case STATE5:
+				if( == c){
+					state = STATE8;
+					addCharElement(bufferid, );
+					insertREEntry(getCharBuffer(bufferid));
+					rewindCharPointer(bufferid);
+				}else if( == c){
+					error();
+				}else if( == c){
+					state = STATE6;
+					addCharElement(bufferid,c);
+				}else if( == c){
+					state = STATE7;
+					addCharElement(bufferid, c);
+				}else{
+					state = STATE5;
+					addCharElement(bufferid,c);
+				}
+				break;
+		
+			case STATE6:
+				if( == c){
+					state = STATE5;
+					addCharElement(bufferid,c);
+				}else if( == c){
+					error();
+				}else{
+					state = STATE6;
+					addCharElement(bufferid,c);
+				}
+				break;
+			case STATE7:
+				if( == c){
+					state = STATE5;
+					addCharElement(bufferid,c);
+				}else if( == c){
+					error();
+				}else{
+					state = STATE7;
+					addCharElement(bufferid,c);
+				}
+				break;
+			case STATE8:
+				if( == c){
+					state = STATE8;
+				}else if( == c){
+					state = STATE9;
+				}else{
+					error();
+				}
+				break;
+			case STATE9:
+				if( == c){
+					state = STATE0;
+					addCharElement(bufferid, );
+					insertREAction(getCharBuffer(bufferid));
+					rewindCharPointer(bufferid);
+				}else{
+					state = STATE9;
+					addCharElement(bufferid,c);
+				}
+				break;
+			case STATE10:
+				if( == c){
+					state = STATE0;
+					destroyCharBuffer(bufferid);
+					return 1;
+				}
+				break;
+			defualt:
+				error();
+		}
+	}
+}
+
+struct Funcentry *funcp = NULL;
+int readFuncSec(){
+	int leftBraceNum = 0;
+	int bufferid = initializeCharBuffer();
+	int state = STATE0;
+	while(1){
+		char c = getch();
+		if(c == EOF){
+			if(state != STATE0)
+				return ERROR;
+			else{
+				destroyCharBuffer(bufferid);
+				return 1;
+			}
+		}
+		switch(state){
+			case STATE0:
+				if( == c){
+					state = STATE1;
+				}else if(isalpha(c) ||  == c){
+					state = STATE5;
+					leftBraceNum = 0;
+					addCharElement(bufferid,c);
+				}else if( == c){
+					state = STATE0;
+				}else{
+					error();
+				}
+				break;
+			case STATE1:
+				if( == c){
+					state = STATE2;
+				}else if( == c){
+					state = STATE4;
+				}else{
+					error();
+				}
+				break;
+			case STATE2:
+				if( == c){
+					state = STATE3;
+				}else{
+					state = STATE2;
+				}
+				break;
+			case STATE3:
+				if( == c){
+					state = STATE3;
+				}else if( == c){
+					state = STATE0;
+				}else{
+					state = STATE2;
+				}
+				break;
+			case STATE4:
+				if( == c){
+					state = STATE0;
+				}else{
+					state = STATE4;
+				}
+				break;
+			case STATE5:
+				if( == c){
+					state = STATE6;
+					addCharElement(bufferid,c);
+				}else if( == c){
+					state = STATE5;
+					leftBraceNum++;
+					addCharElement(bufferid,c);
+				}else if( == c){
+					state = STATE7;
+					addCharElement(bufferid,c);
 				}else if(c == ){
-					state = STATE0;
-					*p++ = c;
-					*p = ;
-					yylval = installOP();
-					return OP;
+					leftBraceNum--;
+					addCharElement(bufferid,c);
+					if(0 == leftBraceNum){
+						state = STATE0;
+						addCharElement(bufferid, );
+						insertFuncEntry(getCharBuffer(bufferid));
+						rewindCharPointer(bufferid);
+					}else{
+						state = STATE5;
+					}
 				}else{
-					state = STATE0;
-					*p = ;
-					ungetch(c);
-					yylval = installOP();
-					return OP;
+					state = STATE5;
+					addCharElement(bufferid,c);
 				}
 				break;
-			case STATE14:
-				if(c == ){
-					state = STATE0;
-					*p++ = c;
-					*p = ;
-					yylval = installOP();
-					return OP;
-				}else if(c == ){
-					state = STATE0;
-					*p++ = c;
-					*p = ;
-					yylval = installOP();
-					return OP;
+			case STATE6:
+				addCharElement(bufferid,c);
+				if( == c){
+					state = STATE5;
+				}else if( == c){
+					error();
 				}else{
-					state = STATE0;
-					*p = ;
-					ungetch(c);
-					yylval = installOP();
-					return OP;
+					state = STATE6;
 				}
 				break;
-			case STATE15:
-				if(c == ){
-					state = STATE0;
-					*p++ = c;
-					*p = ;
-					yylval = installOP();
-					return OP;
-				}else if(c == ){
-					state = STATE0;
-					*p++ = c;
-					*p = ;
-					yylval = installOP();
-					return OP;
+			case STATE7:
+				addCharElement(bufferid,c);
+				if( == c){
+					state = STATE8;
+				}else if( == c){
+					state = STATE10;
 				}else{
-					state = STATE0;
-					*p = ;
-					ungetch(c);
-					yylval = installOP();
-					return OP;
+					error();
 				}
 				break;
-			case STATE16:
-				if(c == ){
-					state = STATE0;
-					*p++ = c;
-					*p = ;
-					yylval = installOP();
-					return OP;
-				}else if(c == ){
-					state = STATE0;
-					*p++ = c;
-					*p = ;
-					yylval = installOP();
-					return OP;
+			case STATE8:
+				addCharElement(bufferid,c);
+				if( == c){
+					state = STATE9;
 				}else{
-					state = STATE0;
-					*p = ;
-					ungetch(c);
-					yylval = installOP();
-					return OP;
+					state = STATE8;
 				}
 				break;
-			case STATE17:
-				if(c == ){
-					state = STATE0;
-					*p++ = c;
-					*p = ;
-					yylval = installOP();
-					return OP;
+			case STATE9:
+				addCharElement(bufferid,c);
+				if( == c){
+					state = STATE9;
+				}else if( == c){
+					state = STATE5;
 				}else{
-					state = STATE0;
-					*p = ;
-					ungetch(c);
-					yylval = installOP();
-					return OP;
+					state = STATE8;
+				}
+				break;
+			case STATE10:
+				addCharElement(bufferid,c);
+				if( == c){
+					state = STATE5;
+				}else{
+					state = STATE10;
 				}
 				break;
 			default:
@@ -314,59 +456,61 @@ int getToken(){
 }
 
 
-int installID(){
-	struct tabentry *temp = malloc(sizeof(struct tabentry));
-	temp->sequnceid = ++idnumnow;
-	temp->lexem = malloc(strlen(yytext)+1);
-	strcpy(temp->lexem, yytext);
-	if(idtable == NULL){
-		idtable = idp = temp;
-		idtable->next = NULL;
+void insertDefEntry(char *name){
+	struct Defentry *temp = malloc(sizeof(struct Defentry));
+	if(NULL == definitions){
+		definitions = defp = temp;			
 	}else{
-		idp->next = temp;
-		idp = temp;
-		idp->next = NULL;
+		defp->next = temp;
+		defp = temp;
 	}
-	return idnumnow;
+	temp->name = malloc(strlen(name)+1);
+	strcpy(temp->name, name);
+	temp->definition = NULL;
+	temp->next = NULL;
 }
 
 
-int installOP(){	
-	struct tabentry *temp = malloc(sizeof(struct tabentry));
-	temp->sequnceid = ++opnumnow;
-	temp->lexem = malloc(strlen(yytext)+1);
-	strcpy(temp->lexem, yytext);
-	if(optable == NULL){
-		optable = opp = temp;
-		optable->next = NULL;
+void insertDefContent(char *def){
+	defp->definition = malloc(strlen(def)+1);
+	strcpy(defp->definition, def);
+}
+
+
+void insertREEntry(char *re){
+	struct REentry *temp = malloc(sizeof(struct REentry));
+	if(NULL == regexps){
+		regexps = rep = temp;			
 	}else{
-		opp->next = temp;
-		opp = temp;
-		opp->next = NULL;
+		rep->next = temp;
+		rep = temp;
 	}
-	return opnumnow;
+	temp->regexp = malloc(strlen(re)+1);
+	strcpy(temp->regexp, re);
+	temp->action = NULL;
+	temp->next = NULL;
 }
 
-void outputtable(char *tabname, struct tabentry *tabhead){
-	char *filename = tabname;
-	FILE *file = fopen(filename, );
-	fprintf(file, );
-	struct tabentry *p = tabhead;
-	struct tabentry *pre = NULL;
-	while(p != NULL){
-		fprintf(file, , p->sequnceid, p->lexem);
-		pre = p;
-		p = p->next;
-		free(pre);
+
+void insertREAction(char *action){
+	rep->action = malloc(strlen(action)+1);
+	strcpy(rep->action, action);
+}
+
+
+void insertFuncEntry(char *body){
+	struct Funcentry *temp = malloc(sizeof(struct Funcentry));
+	if(NULL == additionalfuncs){
+		additionalfuncs = funcp = temp;			
+	}else{
+		funcp->next = temp;
+		funcp = temp;
 	}
-	tabhead = NULL;
-	fclose(file);
+	temp->body = malloc(strlen(body)+1);
+	strcpy(temp->body, body);
+	temp->next = NULL;
 }
 
-
-void error(){
-	printf();	
-}
 
 
 char buf[BUFSIZE];

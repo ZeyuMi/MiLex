@@ -17,8 +17,11 @@
 *.app
 lex
 MiLex
+lexer
 
 
 #others
 output
 lex.yy.c
+test.c
+.DO_Store

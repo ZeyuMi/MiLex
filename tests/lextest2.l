@@ -99,8 +99,9 @@ _Packed			{return _PACKED;}
 
 "?"				{return CONEXPSYMBOL;}
 
-'(.|\\.)'		{return CHARLITERAL;}
-\".*\"			{return STRINGLITERAL;}
+"//"(\t|.)*		{return LINECOMMENT;}
+"/*"(\t|\n|[A-Za-z0-9!@#$%^&(),./\[\]])*"*/" {return BLOCKCOMMENT;}
+
 
 %%
 

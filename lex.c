@@ -35,7 +35,7 @@ struct Defentry *definitions = NULL;
 struct REentry *regexps = NULL;
 struct Funcentry *additionalfuncs = NULL;
 
-char *charset = " !\\\"#$%&'\\(\\)\\*\\+,-./0123456789:;<=>\\?@ABCDEFGHIJKLMNOPQRSTUVWXYZ\\[\\\\\\]^_`abcdefghijklmnopqrstuvwxyz{\\|}~";
+char *charset = " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ\\[\\\\\\]^_`abcdefghijklmnopqrstuvwxyz{|}~";
 
 char *program = NULL;
 
@@ -54,13 +54,11 @@ int main(int argc, char **argv){
 			fprintf(stderr, "the format of %s does not conform to MiLex\n", filename);
 			return 1;
 		}
-		output();
 		preprocess();
-		output();
-		//constructNFA();
-		//constructDFA();
-		//optimizeDFA();
-		//generateProgram("lex.yy.c");
+		constructNFA();
+		constructDFA();
+		optimizeDFA();
+		generateProgram("lex.yy.c");
 		return 0;
 	}
 }

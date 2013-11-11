@@ -57,8 +57,8 @@
 #define LOGICNOT 56
 
 #define CONEXPSYMBOL 57
-#define CHARLITERAL 58
-#define STRINGLITERAL 59
+#define BLOCKCOMMENT 58
+#define LINECOMMENT 59
 
 struct tabentry{
 	int sequnceid;

@@ -45,9 +45,10 @@ void replaceAllDef(){
 }
 
 
-char *fillCharClass(char *);
-char *substituteCharClass(char *);
 char *substituteEscapeChar(char *);
+char *fillCharClass(char *);
+char *substituteDot(char *);
+char *removeBracket(char *);
 char *removeDoubleQuote(char *);
 char *addConSymbol(char *);
 
@@ -57,7 +58,8 @@ void substitute(){
 	while(NULL != retemp){
 		retemp->regexp = substituteEscapeChar(retemp->regexp);
 		retemp->regexp = fillCharClass(retemp->regexp);
-		retemp->regexp = substituteCharClass(retemp->regexp);
+		retemp->regexp = substituteDot(retemp->regexp);
+		retemp->regexp = removeBracket(retemp->regexp);
 		retemp->regexp = removeDoubleQuote(retemp->regexp);
 		retemp->regexp = addConSymbol(retemp->regexp);
 		retemp = retemp->next;
@@ -108,6 +110,9 @@ enum states{ STATE0 = 1,
 				STATE6,
 				STATE7,
 				STATE8,
+				STATE9,
+				STATE10,
+				STATE11,
 				};
 char *getStr(char *);
 
@@ -127,14 +132,12 @@ char *fillCharClass(char *origin){
 				if('[' == c){
 					state = STATE1;
 					addCharElement(bufferid, c);
-				}else if('\\' == c){
-					state = STATE8;
+				}else if('"' == c){
+					state = STATE9;
 					addCharElement(bufferid, c);
-				}else if('.' == c){
-					state = STATE0;
-					addCharElement(bufferid, '[');
-					addCharElements(bufferid, charset);
-					addCharElement(bufferid, ']');
+				}else if('\\' == c){
+					state = STATE11;
+					addCharElement(bufferid, c);
 				}else{
 					state = STATE0;
 					addCharElement(bufferid, c);
@@ -153,6 +156,8 @@ char *fillCharClass(char *origin){
 				}else if('0' <= c && '9' >= c){
 					state = STATE6;
 					buf[0] = c;
+				}else if('\\' == c){
+					state = STATE8;
 				}else{
 					state = STATE1;
 					addCharElement(bufferid, c);
@@ -228,6 +233,38 @@ char *fillCharClass(char *origin){
 				}
 				break;
 			case STATE8:
+				if('A' <= c && 'Z' >= c){
+					state = STATE1;
+					pos--;
+				}else if('a' <= c && 'z' >= c){
+					state = STATE1;
+					pos--;
+				}else if('0' <= c && '9' >= c){
+					state = STATE1;
+					pos--;
+				}else{
+					state = STATE1;
+					addCharElement(bufferid, '\\');
+					addCharElement(bufferid, c);
+				}
+				break;
+			case STATE9:
+				if('"' == c){
+					state = STATE0;
+					addCharElement(bufferid, c);
+				}else if('\\' == c){
+					state = STATE10;
+					addCharElement(bufferid, c);
+				}else{
+					state = STATE9;
+					addCharElement(bufferid, c);
+				}
+				break;
+			case STATE10:
+				state = STATE9;
+				addCharElement(bufferid, c);
+				break;
+			case STATE11:
 				state = STATE0;
 				addCharElement(bufferid, c);
 				break;
@@ -235,6 +272,8 @@ char *fillCharClass(char *origin){
 				error("entering wrong state");
 		}
 	}
+	if(state != STATE0)
+		error("RE format is wrong");
 	free(origin); // free the origin string
 	addCharElement(bufferid, '\0');
 	char *s = getCharBuffer(bufferid);
@@ -276,7 +315,90 @@ char *getStr(char *buf){
 }
 
 
-char *substituteCharClass(char *origin){
+char *substituteDot(char *origin){
+	int bufferid = initializeCharBuffer();
+	int pos = -1;
+	int orilen = strlen(origin);
+	int state = STATE0;
+	while(1){
+		pos++;
+		if(pos >= orilen)
+			break;
+		char c = *(origin+pos);
+		switch(state){
+			case STATE0:
+				if('[' == c){
+					state = STATE1;
+					addCharElement(bufferid, c);
+				}else if('"' == c){
+					state = STATE3;
+					addCharElement(bufferid, c);
+				}else if('\\' == c){
+					state = STATE5;
+					addCharElement(bufferid, c);
+				}else if('.' == c){
+					state = STATE0;
+					addCharElement(bufferid, '[');
+					addCharElements(bufferid, charset);
+					addCharElement(bufferid, ']');
+				}else{
+					state = STATE0;
+					addCharElement(bufferid, c);
+				}
+				break;
+			case STATE1:
+				if(']' == c){
+					state = STATE0;
+					addCharElement(bufferid, c);
+				}else if('\\' == c){
+					state = STATE2;
+					addCharElement(bufferid, c);
+				}else{
+					state = STATE1;
+					addCharElement(bufferid, c);
+				}
+				break;
+			case STATE2:
+				state = STATE1;
+				addCharElement(bufferid, c);
+				break;
+			case STATE3:
+				if('"' == c){
+					state = STATE0;
+					addCharElement(bufferid, c);
+				}else if('\\' == c){
+					state = STATE4;
+					addCharElement(bufferid, c);
+				}else{
+					state = STATE3;
+					addCharElement(bufferid, c);
+				}
+				break;
+			case STATE4:
+				state = STATE3;
+				addCharElement(bufferid, c);
+				break;
+			case STATE5:
+				state = STATE0;
+				addCharElement(bufferid, c);
+				break;
+			default:
+				error("entering wrong state");
+		}
+	}
+	if(state != STATE0)
+		error("RE format is wrong.");
+	free(origin);
+	addCharElement(bufferid, '\0');
+	char *s = getCharBuffer(bufferid);
+	char *result = malloc(strlen(s) + 1);
+	strcpy(result, s);
+	destroyCharBuffer(bufferid);
+	return result;
+}
+
+
+char *removeBracket(char *origin){
 	int bufferid = initializeCharBuffer();
 	int pos = -1;
 	int orilen = strlen(origin);
@@ -292,7 +414,7 @@ char *substituteCharClass(char *origin){
 					state = STATE1;
 					addCharElement(bufferid, '(');
 				}else if('\\' == c){
-					state = STATE2;
+					state = STATE5;
 					addCharElement(bufferid, c);
 				}else if('"' == c){
 					state = STATE3;
@@ -307,9 +429,13 @@ char *substituteCharClass(char *origin){
 					state = STATE0;
 					removeCharLast(bufferid);
 					addCharElement(bufferid, ')');
-				}else if('|' == c || '*' == c || '?' == c || '+' == c || '[' == c || ']' == c || '(' == c || ')' == c || '\\' == c){
+				}else if('.' == c || '|' == c || '*' == c || '?' == c || '+' == c || '(' == c || ')' == c || '"' == c || '[' == c){
 					state = STATE1;
 					addCharElement(bufferid, '\\');
+					addCharElement(bufferid, c);
+					addCharElement(bufferid, '|');
+				}else if('\\' == c){
+					state = STATE2;
 					addCharElement(bufferid, c);
 				}else{
 					state = STATE1;
@@ -318,22 +444,36 @@ char *substituteCharClass(char *origin){
 				}
 				break;
 			case STATE2:
-				state = STATE0;
+				state = STATE1;
 				addCharElement(bufferid, c);
+				addCharElement(bufferid, '|');
 				break;
 			case STATE3:
 				if('"' == c){
 					state = STATE0;
+					addCharElement(bufferid, c);
+				}else if('\\' == c){
+					state = STATE4;
 					addCharElement(bufferid, c);
 				}else{
 					state = STATE3;
 					addCharElement(bufferid, c);
 				}
 				break;
+			case STATE4:
+				state = STATE3;
+				addCharElement(bufferid, c);
+				break;
+			case STATE5:
+				state = STATE0;
+				addCharElement(bufferid, c);
+				break;
 			default:
 				error("entering wrong state");
 		}
 	}
+	if(state != STATE0)
+		error("RE format is wrong.");
 	free(origin);
 	addCharElement(bufferid, '\0');
 	char *s = getCharBuffer(bufferid);
@@ -380,6 +520,8 @@ char *substituteEscapeChar(char *origin){
 				error("entering wrong state");
 		}
 	}
+	if(state != STATE0)
+		error("RE format is wrong.");
 	free(origin);
 	addCharElement(bufferid, '\0');
 	char *s = getCharBuffer(bufferid);
@@ -404,8 +546,9 @@ char *removeDoubleQuote(char *origin){
 			case STATE0:
 				if('"' == c){
 					state = STATE1;
+					addCharElement(bufferid, '(');
 				}else if('\\' == c){
-					state = STATE2;
+					state = STATE3;
 					addCharElement(bufferid, c);
 				}else{
 					state = STATE0;
@@ -415,9 +558,13 @@ char *removeDoubleQuote(char *origin){
 			case STATE1:
 				if('"' == c){
 					state = STATE0;
-				}else if('|' == c || '*' == c || '?' == c || '+' == c || '[' == c || ']' == c || '(' == c || ')' == c || '\\' == c){
+					addCharElement(bufferid, ')');
+				}else if('.' == c || '|' == c || '*' == c || '?' == c || '+' == c || '[' == c || ']' == c || '(' == c || ')' == c){
 					state = STATE1;
 					addCharElement(bufferid, '\\');
+					addCharElement(bufferid, c);
+				}else if('\\' == c){
+					state = STATE2;
 					addCharElement(bufferid, c);
 				}else{
 					state = STATE1;
@@ -425,6 +572,10 @@ char *removeDoubleQuote(char *origin){
 				}
 				break;
 			case STATE2:
+				state = STATE1;
+				addCharElement(bufferid, c);
+				break;
+			case STATE3:
 				state = STATE0;
 				addCharElement(bufferid, c);
 				break;
@@ -457,35 +608,26 @@ char *addConSymbol(char *origin){
 				if('|' == c || '(' == c){
 					state = STATE0;
 					addCharElement(bufferid, c);
-				}else if('?' == c || '*' == c || '+' == c){
+				}else if('\\' == c){
 					state = STATE1;
 					addCharElement(bufferid, c);
-				}else if('\\' == c){
-					state = STATE3;
+				}else if('?' == c || '+' == c || '*' == c){
+					state = STATE2;
 					addCharElement(bufferid, c);
 				}else{
-					state = STATE2;
+					state = STATE3;
 					addCharElement(bufferid, c);
 				}
 				break;
 			case STATE1:
-				if('|' == c){
-					state = STATE0;
-					pos--;
-				}else if(')' == c){
-					state = STATE0;
-					addCharElement(bufferid, c);
-				}else if((pos+1) >= orilen){
-					state = STATE0;
-					addCharElement(bufferid, c);
-				}else{
-					state = STATE0;
-					addCharElement(bufferid, CONSYMBOL);
-					pos--;
-				}
+				state = STATE3;
+				addCharElement(bufferid, c);
 				break;
 			case STATE2:
-				if('?' == c||'*' == c||'+' == c||'|' == c|| ')' == c){
+				if('?' == c || '+' == c || '*' == c){
+					error("RE format is wrong.");
+					break; //error
+				}else if('|' == c || ')' == c){
 					state = STATE0;
 					pos--;
 				}else{
@@ -495,8 +637,14 @@ char *addConSymbol(char *origin){
 				}
 				break;
 			case STATE3:
-				state = STATE2;
-				addCharElement(bufferid, c);
+				if('?' == c||'*' == c||'+' == c||'|' == c|| ')' == c){
+					state = STATE0;
+					pos--;
+				}else{
+					state = STATE0;
+					addCharElement(bufferid, CONSYMBOL);
+					pos--;
+				}
 				break;
 			default:
 				error("entering wrong state");
