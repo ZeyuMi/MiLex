@@ -1,0 +1,16 @@
+int initializeCharBuffer();
+char *getCharBuffer(int);
+void addCharElement(int, char);
+void addCharElements(int, char *);
+void removeCharLast(int);
+void destroyCharBuffer(int);
+void rewindCharPointer(int);
+int charSize(int);
+int initializeIntBuffer();
+void addIntElement(int, int);
+void removeIntLast(int);
+void destroyIntBuffer(int);
+void rewindIntPointer(int);
+int intSize(int);
+void fillIntArrayWithBuffer(int, int *);
+int isInIntBuffer(int, int);
