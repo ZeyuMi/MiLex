@@ -24,13 +24,8 @@ Generate lex.yy.c:
 
 	./Milex lex.l
 
-## Examples
 
-### Regular Expression
-
-
-
-### Input File Format
+## Input File Format
 
 * MiLex input files have the same structures as those of Lex and Flex, which are splitted into three sections, say definition section, rule section and additional function section
 * You can use *, ?, +, |, (, ), [, ], ., and " to write your regular expressions
