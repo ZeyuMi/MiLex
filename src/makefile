@@ -3,6 +3,8 @@ OBJS = lex.o lexReader.o preprocessor.o nfaConstructor.o dfaConstructor.o dfaOpt
 
 CFLAGS= -g
 
+all: MiLex
+
 MiLex : $(OBJS)
 	cc -g $(OBJS) -o MiLex
 
