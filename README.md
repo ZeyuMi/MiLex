@@ -29,7 +29,7 @@ Generate lex.yy.c:
 
 * MiLex input files have the same structures as those of Lex and Flex, which are splitted into three sections, say definition section, rule section and additional function section
 * You can use *, ?, +, |, (, ), [, ], ., and " to write your regular expressions
-* tests/lextest2.l is a concrete example FYI
+* All files ended with ".l" in tests directory are conrete examples of MiLex input files
 
 ## Contributors
 
