@@ -24,4 +24,4 @@ lexer
 output
 lex.yy.c
 test.c
-.DO_Store
+.DS_Store
